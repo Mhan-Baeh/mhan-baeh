@@ -15,4 +15,6 @@ func SetCustomerRoutes(router *gin.RouterGroup, db *gorm.DB) {
 	router.POST("customers", ctrls.CreateCustomer)
 	router.PUT("customers/:id", ctrls.UpdateCustomer)
 	router.DELETE("customers/:id", ctrls.DeleteCustomer)
+	router.POST("register", ctrls.Register)
+	router.POST("login", ctrls.Login)
 }
