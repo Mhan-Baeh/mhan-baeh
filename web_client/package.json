@@ -1,45 +1,71 @@
 {
-  "name": "housekeeper-app",
+  "name": "web-admin-mlm",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "serve": "vue-cli-service serve --host localhost",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
-  },
   "dependencies": {
-    "axios": "^1.5.0",
-    "core-js": "^3.8.3",
-    "vue": "^3.2.13",
-    "vue-router": "^4.2.4"
+    "@hookform/resolvers": "^2.9.11",
+    "@mui/icons-material": "^5.14.9",
+    "@mui/material": "^5.14.9",
+    "@pankod/refine-cli": "^1.2.0",
+    "@pankod/refine-core": "^3.18.0",
+    "@pankod/refine-inferencer": "^2.0.2",
+    "@pankod/refine-mui": "^3.30.0",
+    "@pankod/refine-react-hook-form": "^3.27.1",
+    "@pankod/refine-react-router-v6": "^3.18.0",
+    "@pankod/refine-simple-rest": "^3.18.0",
+    "@testing-library/jest-dom": "^5.12.0",
+    "@testing-library/react": "^11.2.6",
+    "@testing-library/user-event": "^12.8.3",
+    "@types/jest": "^26.0.23",
+    "mui-file-input": "^3.0.2",
+    "react": "^18.2.0",
+    "react-beautiful-dnd": "^13.1.1",
+    "react-dom": "^18.2.0",
+    "react-icon": "^1.0.0",
+    "react-icons": "^4.11.0",
+    "react-image-gallery": "^1.3.0",
+    "react-scripts": "^5.0.0",
+    "react-toastify": "^9.1.3",
+    "styled-components": "^6.0.8",
+    "web-vitals": "^1.1.1",
+    "yup": "^1.0.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.16",
-    "@babel/eslint-parser": "^7.12.16",
-    "@vue/cli-plugin-babel": "~5.0.0",
-    "@vue/cli-plugin-eslint": "~5.0.0",
-    "@vue/cli-service": "~5.0.0",
-    "eslint": "^7.32.0",
-    "eslint-plugin-vue": "^8.0.3"
+    "@types/node": "^12.20.10",
+    "@types/react": "^18.0.15",
+    "@types/react-beautiful-dnd": "^13.1.4",
+    "@types/react-dom": "^18.0.6",
+    "@types/react-image-gallery": "^1.2.0",
+    "autoprefixer": "^10.4.15",
+    "postcss": "^8.4.29",
+    "tailwindcss": "^3.3.3",
+    "typescript": "^4.7.4"
+  },
+  "scripts": {
+    "dev": " refine start",
+    "build": "refine build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "refine": "refine",
+    "build:css": "tailwindcss build -i src/index.css -o src/tailwind.css",
+    "watch:css": "tailwindcss build -i src/index.css -o src/tailwind.css"
   },
   "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
     "extends": [
-      "plugin:vue/vue3-essential",
-      "eslint:recommended"
-    ],
-    "parserOptions": {
-      "parser": "@babel/eslint-parser"
-    },
-    "rules": {}
+      "react-app",
+      "react-app/jest"
+    ]
   },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead",
-    "not ie 11"
-  ]
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }
