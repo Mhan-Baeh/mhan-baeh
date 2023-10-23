@@ -10,39 +10,40 @@ import (
 
 	"context"
 
-	"github.com/google/uuid"
+	uuidGoogle "github.com/google/uuid"
+	uuidGofr "github.com/gofrs/uuid"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 
 	schema "appointment_service/internal/schemas"
 )
 
-
 type AppointmentService struct {
 	appointmentRepo *postgres.AppointmentRepo
-	jobRepo *mongo.JobRepo
-	grpcClient *grpc.ClientConn
+	jobRepo         *mongo.JobRepo
+	csClient        *grpc.ClientConn
+	hkClient        *grpc.ClientConn
 }
 
-func NewAppointmentService(aptRepo *postgres.AppointmentRepo, jobRepo *mongo.JobRepo, grpcClient *grpc.ClientConn) *AppointmentService {
-	return &AppointmentService{appointmentRepo: aptRepo, jobRepo: jobRepo, grpcClient: grpcClient}
+func NewAppointmentService(aptRepo *postgres.AppointmentRepo, jobRepo *mongo.JobRepo, csClient *grpc.ClientConn, hkClient *grpc.ClientConn) *AppointmentService {
+	return &AppointmentService{appointmentRepo: aptRepo, jobRepo: jobRepo, csClient: csClient, hkClient: hkClient}
 }
-
-
 
 func (s *AppointmentService) GetAllAppointment() ([]*schema.AppointmentReturnType, error) {
 	var appointments []*schema.AppointmentReturnType
-	dbAppointments,err := s.appointmentRepo.GetAllAppointment()
+	dbAppointments, err := s.appointmentRepo.GetAllAppointment()
 	if err != nil {
 		return nil, err
 	}
-	
-	client := pb.NewAddressServiceClient(s.grpcClient)
+
+	addressClient := pb.NewAddressServiceClient(s.csClient)
+	housekeeperClient := pb.NewHousekeeperServiceClient(s.hkClient)
+
 	for _, dbAppointment := range dbAppointments {
-		
+
 		// get address by id from grpc call to customer service
-		log.Printf( "dbAppointment.AddressId.String(): %v", dbAppointment.AddressId.String())
-		response,err := client.GetAddress(context.Background(), &pb.GetAddressRequest{
+		log.Printf("dbAppointment.AddressId.String(): %v", dbAppointment.AddressId.String())
+		addressResponse, err := addressClient.GetAddress(context.Background(), &pb.GetAddressRequest{
 			AddressId: dbAppointment.AddressId.String(),
 		})
 
@@ -59,44 +60,65 @@ func (s *AppointmentService) GetAllAppointment() ([]*schema.AppointmentReturnTyp
 			}
 		} else {
 			address = &schema.AddressReturnType{
-				AddressID:  response.AddressId,
-				CustomerID: response.CustomerId,
-				Name:       response.Name,
-				Address:    response.Address,
-				Note:       response.Note,
-				HouseSize:  response.HouseSize,
+				AddressID:  addressResponse.AddressId,
+				CustomerID: addressResponse.CustomerId,
+				Name:       addressResponse.Name,
+				Address:    addressResponse.Address,
+				Note:       addressResponse.Note,
+				HouseSize:  addressResponse.HouseSize,
 			}
 		}
-		
+
 		// get housekeeper by id from grpc call to housekeeper service
-		// TODO: implement grpc call to get housekeeper by id
-		
+		housekeeperResponse, err := housekeeperClient.GetHousekeeperByUuid(context.Background(), &pb.GetHousekeeperRequest{
+			HousekeeperUuid: dbAppointment.HousekeeperId.String(),
+		})
+
+		var housekeeper *schema.HousekeeperReturnType
+		if err != nil {
+			log.Printf("error grpc hee: %v", err)
+			housekeeper = &schema.HousekeeperReturnType{
+				HousekeeperId: "NOT FOUND",
+				Name:          "NOT FOUND",
+				Phone:         "NOT FOUND",
+				Email:         "NOT FOUND",
+				Password:      "NOT FOUND",
+			}
+		} else {
+			housekeeper = &schema.HousekeeperReturnType{
+				HousekeeperId: housekeeperResponse.HousekeeperUuid,
+				Name:          housekeeperResponse.Name,
+				Phone:         housekeeperResponse.Phone,
+				Email:         housekeeperResponse.Email,
+				Password:      housekeeperResponse.Password,
+			}
+		}
+
 		appointment := &schema.AppointmentReturnType{
-			AppointmentId:  dbAppointment.AppointmentId,
-			CustomerId:     dbAppointment.CustomerId,
-			HousekeeperId:  dbAppointment.HousekeeperId,
-			ToDoList:       dbAppointment.ToDoList,
-			Price:          dbAppointment.Price,
-			StartDateTime:  dbAppointment.StartDateTime,
-			EndDateTime:    dbAppointment.EndDateTime,
-			Status:         schema.AppointmentStatus(dbAppointment.Status),
-			AddressId:      dbAppointment.AddressId,
-			Address: 	  	address,
+			AppointmentId: dbAppointment.AppointmentId,
+			CustomerId:    dbAppointment.CustomerId,
+			HousekeeperId: dbAppointment.HousekeeperId,
+			ToDoList:      dbAppointment.ToDoList,
+			Price:         dbAppointment.Price,
+			StartDateTime: dbAppointment.StartDateTime,
+			EndDateTime:   dbAppointment.EndDateTime,
+			Status:        schema.AppointmentStatus(dbAppointment.Status),
+			AddressId:     dbAppointment.AddressId,
+			Address:       address,
+			Housekeeper:   housekeeper,
 		}
 		appointments = append(appointments, appointment)
 	}
 	return appointments, nil
 }
 
-
-
-func (s *AppointmentService) CreateAppointment(c context.Context,appointment *postgresModel.Appointment) error {
+func (s *AppointmentService) CreateAppointment(c context.Context, appointment *postgresModel.Appointment) error {
 	// business checking logic
 
 	// check valid customer by grpc call to customer service
-	customerClient := pb.NewCustomerServiceClient(s.grpcClient)
+	customerClient := pb.NewCustomerServiceClient(s.csClient)
 	log.Printf("customerClient: %v", customerClient)
-	customerResponse,err := customerClient.GetCustomer(context.Background(), &pb.GetCustomerRequest{
+	customerResponse, err := customerClient.GetCustomer(context.Background(), &pb.GetCustomerRequest{
 		CustomerId: appointment.CustomerId.String(),
 	})
 	if err != nil {
@@ -105,10 +127,9 @@ func (s *AppointmentService) CreateAppointment(c context.Context,appointment *po
 	}
 	log.Printf("customerResponse: %v", customerResponse)
 
-	
 	// check if address provided is valid by grpc call to customer service
-	client := pb.NewAddressServiceClient(s.grpcClient)
-	addressResponse,err := client.GetAddress(context.Background(), &pb.GetAddressRequest{
+	addressClient := pb.NewAddressServiceClient(s.csClient)
+	addressResponse, err := addressClient.GetAddress(context.Background(), &pb.GetAddressRequest{
 		AddressId: appointment.AddressId.String(),
 	})
 	if err != nil {
@@ -118,7 +139,25 @@ func (s *AppointmentService) CreateAppointment(c context.Context,appointment *po
 	log.Printf("addressResponse: %v", addressResponse)
 
 	// get all housekeepers by grpc call to housekeeper service
-	// TODO: implement grpc call to get all housekeepers
+	housekeeperClient := pb.NewHousekeeperServiceClient(s.hkClient)
+	housekeeperResponse, err := housekeeperClient.GetAllHousekeepers(context.Background(), &pb.Empty{})
+	if err != nil {
+		log.Printf("error grpc hee: %v", err)
+
+	}
+
+	// convert housekeeperResponse to array of schema.HousekeeperReturnType
+	var housekeeperResponseArr []*schema.HousekeeperReturnType
+	for _, housekeeper := range housekeeperResponse.Housekeepers {
+		housekeeperResponseArr = append(housekeeperResponseArr, &schema.HousekeeperReturnType{
+			HousekeeperId: housekeeper.HousekeeperUuid,
+			Name:          housekeeper.Name,
+			Phone:         housekeeper.Phone,
+			Email:         housekeeper.Email,
+			Password:      housekeeper.Password,
+		})
+	}
+
 
 	// get 1 free housekeeper with intersected time range
 	// query in appointment table to get all intersected appointments
@@ -131,29 +170,30 @@ func (s *AppointmentService) CreateAppointment(c context.Context,appointment *po
 
 	log.Printf("intersectedAppointments: %v", intersectedAppointments)
 
-	/*
-	 find housekeeper that is not in intersectedAppointments
-	for _, housekeeper := range __housekeeper_from_grpc_call__ {
+	//  find housekeeper that is not in intersectedAppointments
+	for _, housekeeper := range housekeeperResponseArr {
 		isFree := true
 		for _, intersectedAppointment := range intersectedAppointments {
-			if housekeeper.housekeeperId == intersectedAppointment.HousekeeperId {
+			if housekeeper.HousekeeperId == intersectedAppointment.HousekeeperId.String() {
 				isFree = false
 				break
 			}
 		}
 
 		if isFree {
-			appointment.HousekeeperId = housekeeper.housekeeperId
+			housekeeperUUID, err := uuidGofr.FromString(housekeeper.HousekeeperId)
+			if err != nil {
+				return err
+			}
+			appointment.HousekeeperId = housekeeperUUID
 			break
 		}
 	}
 
-	if no free housekeeper, return error
-	if appointment.HousekeeperId == uuid.Nil {
+	// if no free housekeeper, return error
+	if appointment.HousekeeperId == uuidGofr.Nil {
 		return errors.New("no free housekeeper")
 	}
-	*/
-
 
 	// validate to do list by query with repo to get to do lists
 	todoList, err := s.jobRepo.GetJobByIds(c, appointment.ToDoList)
@@ -176,14 +216,13 @@ func (s *AppointmentService) CreateAppointment(c context.Context,appointment *po
 	return s.appointmentRepo.CreateAppointment(appointment)
 }
 
-func (s *AppointmentService) UpdateAppointmentStatus(c context.Context,id string, status string) error {
+func (s *AppointmentService) UpdateAppointmentStatus(c context.Context, id string, status string) error {
 
-
-	data , err := uuid.Parse(id)
+	data, err := uuidGoogle.Parse(id)
 	if err != nil {
 		return err
 	}
-	dbAppointment,err := s.appointmentRepo.GetAppointmentById(data)
+	dbAppointment, err := s.appointmentRepo.GetAppointmentById(data)
 	if err != nil {
 		return errors.New("appointment not found")
 	}

@@ -20,6 +20,7 @@ type Config struct {
 	MongoDBName   string `env:"MONGO_DB_NAME" envDefault:"appointment_service"`
 	KafkaBroker   string `env:"KAFKA_BROKER" envDefault:"localhost:9092"`
 	CustomerServiceGrpcHost string `env:"CUSTOMER_SERVICE_GRPC_HOST" envDefault:"localhost:18081"`
+	HousekeeperServiceGrpcHost string `env:"HOUSEKEEPER_SERVICE_GRPC_HOST" envDefault:"localhost:18082"`
 }
 
 func NewConfig() Config {

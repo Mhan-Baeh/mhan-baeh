@@ -24,13 +24,19 @@ func main() {
 	mongoRepo := mongo.NewJobRepo(mongoConn, cfg.MongoDBName)
 
 	// grpc client
-	grpcClient := client.NewGRPCClient(cfg.CustomerServiceGrpcHost)
-	grpcClientConn, err := grpcClient.InitClient()
+	csClient := client.NewGRPCClient(cfg.CustomerServiceGrpcHost)
+	csClientConn, err := csClient.InitClient()
 	if err != nil {
-		log.Fatalf("failed to connect to grpc client: %v", err)
+		log.Fatalf("failed to connect to grpc customer service client: %v", err)
+	}
+
+	hkClient := client.NewGRPCClient(cfg.HousekeeperServiceGrpcHost)
+	hkClientConn, err := hkClient.InitClient()
+	if err != nil {
+		log.Fatalf("failed to connect to grpc housekeeper service client: %v", err)
 	}
 	
-	apptService := services.NewAppointmentService(pgRepo,mongoRepo, grpcClientConn)
+	apptService := services.NewAppointmentService(pgRepo,mongoRepo, csClientConn, hkClientConn)
 	jobService := services.NewJobService(mongoRepo)
 
 	apptHandler := http.NewAppointmentHandler(apptService)

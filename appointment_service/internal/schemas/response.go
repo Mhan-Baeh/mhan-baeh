@@ -19,10 +19,18 @@ const (
 type AddressReturnType struct {
 	AddressID  string `json:"address_id"`
 	CustomerID string `json:"customer_id"`
-	Name       string    `json:"name"`
-	Address    string    `json:"address"`
-	Note       string    `json:"note"`
-	HouseSize  string       `json:"house_size"`
+	Name       string `json:"name"`
+	Address    string `json:"address"`
+	Note       string `json:"note"`
+	HouseSize  string `json:"house_size"`
+}
+
+type HousekeeperReturnType struct {
+	HousekeeperId string `json:"housekeeper_id"`
+	Name          string `json:"name"`
+	Phone         string `json:"phone"`
+	Email         string `json:"email"`
+	Password      string `json:"password"`
 }
 
 type AppointmentReturnType struct {
@@ -40,5 +48,6 @@ type AppointmentReturnType struct {
 	CreatedAt     time.Time         `json:"created_at"`
 	UpdatedAt     time.Time         `json:"updated_at"`
 
-	Address *AddressReturnType `json:"address"`
+	Address     *AddressReturnType     `json:"address"`
+	Housekeeper *HousekeeperReturnType `json:"housekeeper"`
 }
