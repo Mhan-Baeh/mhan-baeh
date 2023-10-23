@@ -49,7 +49,7 @@ func main() {
 
 	go r.Run(":" + SV_PORT)
 
-	listener, err := net.Listen("tcp", ":18081")
+	listener, err := net.Listen("tcp", ":18082")
 	if err != nil {
 		panic(err)
 	}
@@ -57,7 +57,7 @@ func main() {
 	s := grpc.NewServer()
 	reflection.Register(s)
 
-	pb.RegisterHousekeeperServiceServer(s, &grpcController.HousekeeperServiceServer{})
+	pb.RegisterHousekeeperServiceServer(s, &grpcController.HousekeeperServiceServer{DB: db})
 
 	if err := s.Serve(listener); err != nil {
 		panic(err)
