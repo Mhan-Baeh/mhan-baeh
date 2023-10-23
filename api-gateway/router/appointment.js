@@ -8,9 +8,9 @@ router.post("/http/jobs", appointmentCtrl.post)
 router.get("/http/jobs", appointmentCtrl.get)
 
 router.get("/http/appointments", appointmentCtrl.get)
-router.post("/http/appointments", appointmentCtrl.post)
+router.post("/http/appointments", appointmentCtrl.pushKafka)
 router.post("/http/appointments/kafka", appointmentCtrl.post) // TODO remove this
-//router.patch
+router.patch("/http/appointments/:id", appointmentCtrl.patch)
 router.get("/health", appointmentCtrl.get)
 
 

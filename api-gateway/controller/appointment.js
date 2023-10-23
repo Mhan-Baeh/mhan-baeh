@@ -28,9 +28,21 @@ const del = async (req, res, next) => {
     next()
 }
 
+const patch = async (req, res, next) => {
+    await api.patch(req, res, baseUrl, prefix)
+    next()
+}
+
+const pushKafka = async (req, res, next) => {
+    await api.pushKafka(req, res, "create_appointment")
+    next()
+}
+
 module.exports =  {
     get,
     post,
     put,
     del,
+    patch,
+    pushKafka,
 }
