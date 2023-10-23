@@ -1,5 +1,4 @@
 const express = require('express')
-const cookieParser = require('cookie-parser');
 require('./utils/load-env')()
 const router = require('./router/router');
 
@@ -9,7 +8,6 @@ const port = process.env.PORT
 const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser())
 
 // Authentication
 app.use((req, res, next) => {
