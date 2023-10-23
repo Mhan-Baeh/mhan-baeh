@@ -8,7 +8,7 @@ import (
 	"net"
 	"net/http"
 	"os"
-
+"grpcServer/pb"
 	"grpcServer/controllers"
 
 	"github.com/gin-gonic/gin"
@@ -54,14 +54,21 @@ func main() {
 
 	port := fmt.Sprintf(":%v", PORT)
 	fmt.Println("Server Running on Port", port)
-	http.ListenAndServe(port, router)
-
+	
+	go http.ListenAndServe(port, router)
 	listener, err := net.Listen("tcp", ":18081")
 	if err != nil {
 		panic(err)
 	}
-
+	
 	s := grpc.NewServer()
 	reflection.Register(s)
-	controllers.RegisterCustomerService(s, &listener)
+	
+	pb.RegisterCustomerServiceServer(s, &controllers.CustomerServiceServer{})
+	pb.RegisterAddressServiceServer(s, &controllers.AddressServiceServer{})
+
+	if err := s.Serve(listener); err != nil {
+		panic(err)
+	}
+
 }

@@ -1,6 +1,7 @@
 package services
 
 import (
+	"appointment_service/api/pb"
 	postgresModel "appointment_service/internal/models/postgres"
 	"appointment_service/internal/repo/mongo"
 	"appointment_service/internal/repo/postgres"
@@ -11,21 +12,80 @@ import (
 
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
+	"google.golang.org/grpc"
+
+	schema "appointment_service/internal/schemas"
 )
 
 
 type AppointmentService struct {
 	appointmentRepo *postgres.AppointmentRepo
 	jobRepo *mongo.JobRepo
-
+	grpcClient *grpc.ClientConn
 }
 
-func NewAppointmentService(aptRepo *postgres.AppointmentRepo, jobRepo *mongo.JobRepo) *AppointmentService {
-	return &AppointmentService{appointmentRepo: aptRepo, jobRepo: jobRepo}
+func NewAppointmentService(aptRepo *postgres.AppointmentRepo, jobRepo *mongo.JobRepo, grpcClient *grpc.ClientConn) *AppointmentService {
+	return &AppointmentService{appointmentRepo: aptRepo, jobRepo: jobRepo, grpcClient: grpcClient}
 }
 
-func (s *AppointmentService) GetAllAppointment() ([]*postgresModel.Appointment, error) {
-	return s.appointmentRepo.GetAllAppointment()
+
+
+func (s *AppointmentService) GetAllAppointment() ([]*schema.AppointmentReturnType, error) {
+	var appointments []*schema.AppointmentReturnType
+	dbAppointments,err := s.appointmentRepo.GetAllAppointment()
+	if err != nil {
+		return nil, err
+	}
+	
+	client := pb.NewAddressServiceClient(s.grpcClient)
+	for _, dbAppointment := range dbAppointments {
+		
+		// get address by id from grpc call to customer service
+		log.Printf( "dbAppointment.AddressId.String(): %v", dbAppointment.AddressId.String())
+		response,err := client.GetAddress(context.Background(), &pb.GetAddressRequest{
+			AddressId: dbAppointment.AddressId.String(),
+		})
+
+		var address *schema.AddressReturnType
+		if err != nil {
+			log.Printf("error grpc hee: %v", err)
+			address = &schema.AddressReturnType{
+				AddressID:  "NOT FOUND",
+				CustomerID: "NOT FOUND",
+				Name:       "NOT FOUND",
+				Address:    "NOT FOUND",
+				Note:       "NOT FOUND",
+				HouseSize:  "0",
+			}
+		} else {
+			address = &schema.AddressReturnType{
+				AddressID:  response.AddressId,
+				CustomerID: response.CustomerId,
+				Name:       response.Name,
+				Address:    response.Address,
+				Note:       response.Note,
+				HouseSize:  response.HouseSize,
+			}
+		}
+		
+		// get housekeeper by id from grpc call to housekeeper service
+		// TODO: implement grpc call to get housekeeper by id
+		
+		appointment := &schema.AppointmentReturnType{
+			AppointmentId:  dbAppointment.AppointmentId,
+			CustomerId:     dbAppointment.CustomerId,
+			HousekeeperId:  dbAppointment.HousekeeperId,
+			ToDoList:       dbAppointment.ToDoList,
+			Price:          dbAppointment.Price,
+			StartDateTime:  dbAppointment.StartDateTime,
+			EndDateTime:    dbAppointment.EndDateTime,
+			Status:         schema.AppointmentStatus(dbAppointment.Status),
+			AddressId:      dbAppointment.AddressId,
+			Address: 	  	address,
+		}
+		appointments = append(appointments, appointment)
+	}
+	return appointments, nil
 }
 
 
@@ -34,12 +94,28 @@ func (s *AppointmentService) CreateAppointment(c context.Context,appointment *po
 	// business checking logic
 
 	// check valid customer by grpc call to customer service
-	// TODO: implement grpc call to get customer by id
+	customerClient := pb.NewCustomerServiceClient(s.grpcClient)
+	log.Printf("customerClient: %v", customerClient)
+	customerResponse,err := customerClient.GetCustomer(context.Background(), &pb.GetCustomerRequest{
+		CustomerId: appointment.CustomerId.String(),
+	})
+	if err != nil {
+		log.Printf("error grpc hee: %v", err)
+		return err
+	}
+	log.Printf("customerResponse: %v", customerResponse)
 
 	
 	// check if address provided is valid by grpc call to customer service
-	// TODO: implement grpc call to get address by id
-
+	client := pb.NewAddressServiceClient(s.grpcClient)
+	addressResponse,err := client.GetAddress(context.Background(), &pb.GetAddressRequest{
+		AddressId: appointment.AddressId.String(),
+	})
+	if err != nil {
+		log.Printf("error grpc hee: %v", err)
+		return err
+	}
+	log.Printf("addressResponse: %v", addressResponse)
 
 	// get all housekeepers by grpc call to housekeeper service
 	// TODO: implement grpc call to get all housekeepers
@@ -93,6 +169,9 @@ func (s *AppointmentService) CreateAppointment(c context.Context,appointment *po
 	if len(todoList) != len(appointment.ToDoList) {
 		return errors.New("invalid to do list")
 	}
+
+	// calculate total price
+	appointment.Price = appointment.Hour * 300
 
 	return s.appointmentRepo.CreateAppointment(appointment)
 }

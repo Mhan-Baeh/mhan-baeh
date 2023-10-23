@@ -11,6 +11,7 @@ import (
 	"log"
 
 	"appointment_service/internal/infra/kafka"
+	"appointment_service/internal/infra/client"
 )
 
 func main() {
@@ -18,26 +19,33 @@ func main() {
 	log.Printf("Configuration: %+v", cfg)  // Add this line
 	pgConn := db.InitPostgres(cfg.PostgresDSN)
 	mongoConn := db.InitMongo(cfg.MongoDSN)
-
+	
 	pgRepo := postgres.NewAppointmentRepo(pgConn)
 	mongoRepo := mongo.NewJobRepo(mongoConn, cfg.MongoDBName)
 
-	apptService := services.NewAppointmentService(pgRepo,mongoRepo)
+	// grpc client
+	grpcClient := client.NewGRPCClient(cfg.CustomerServiceGrpcHost)
+	grpcClientConn, err := grpcClient.InitClient()
+	if err != nil {
+		log.Fatalf("failed to connect to grpc client: %v", err)
+	}
+	
+	apptService := services.NewAppointmentService(pgRepo,mongoRepo, grpcClientConn)
 	jobService := services.NewJobService(mongoRepo)
 
 	apptHandler := http.NewAppointmentHandler(apptService)
 	jobHandler := http.NewJobHandler(jobService)
 
 	httpHandler := http.NewHandler(apptHandler, jobHandler)
-	// grpcHandler := handler.NewGrpcHandler(apptService, jobService)
 
 	httpServer := server.NewHTTPServer(httpHandler, cfg.HTTPPort)
-	// grpcServer := server.NewGRPCServer(grpcHandler)
+
+
+
 
 	// Run servers concurrently (for simplicity, error handling omitted)
 	go httpServer.Run(&cfg)
 
 	consumer := kafka.NewConsumer(apptService, &cfg)
 	consumer.Start()
-	// grpcServer.Run()
 }

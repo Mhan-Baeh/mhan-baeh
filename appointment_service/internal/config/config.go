@@ -15,10 +15,11 @@ type Config struct {
 	DBName        string `env:"DB_NAME" envDefault:"appointment_service"`
 	DBPassword    string `env:"DB_PASSWORD" envDefault:"password"`
 	DBSslMode     string `env:"DB_SSLMODE" envDefault:"disable"`
-	PostgresDSN   string `env:"POSTGRES_DSN" envDefault:"postgres://user:password@localhost:5432/appointment_service?sslmode=disable"`
+	PostgresDSN   string `env:"POSTGRES_DSN" envDefault:"postgres://user:password@localhost:5433/appointment_service?sslmode=disable"`
 	MongoDSN	  string `env:"MONGO_DSN" envDefault:"mongodb://user:password@localhost:27016"`
 	MongoDBName   string `env:"MONGO_DB_NAME" envDefault:"appointment_service"`
 	KafkaBroker   string `env:"KAFKA_BROKER" envDefault:"localhost:9092"`
+	CustomerServiceGrpcHost string `env:"CUSTOMER_SERVICE_GRPC_HOST" envDefault:"localhost:18081"`
 }
 
 func NewConfig() Config {
