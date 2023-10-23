@@ -139,4 +139,5 @@ module.exports = {
     put,
     del,
     patch,
+    pushKafka,
 }
