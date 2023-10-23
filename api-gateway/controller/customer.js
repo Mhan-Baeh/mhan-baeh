@@ -1,26 +1,34 @@
-import axios from "axios";
-import api from "../utils/api";
+const api = require('../utils/api');
 
-const baseUrl = process.env.HOUSEKEEPER_SERVICE_URI
-const prefix = "/customer/"
+const baseUrl = process.env.CUSTOMER_URI
+// if a request url is http://hostname/example-api/...
+// the request will be forwarded to http://{example-api_hostname}/...
+// As you can see, the prefix is removed from the url
 
-const get = (ctx) => {
-    return api.get(ctx, baseUrl, prefix)
+// Thus, "the predfix should match the route defined in router/router.js"
+const prefix = "/customer-api/" 
+
+const get = async (req, res, next) => {
+    await api.get(req, res, baseUrl, prefix)
+    next()
 }
 
-const post = (ctx) => {
-    return api.post(ctx, baseUrl, prefix)
+const post = async (req, res, next) => {
+    await api.post(req, res, baseUrl, prefix)
+    next()
 }
 
-const put = (ctx) => {
-    return api.put(ctx, baseUrl, prefix)
+const put = async (req, res, next) => {
+    await api.put(req, res, baseUrl, prefix)
+    next()
 }
 
-const del = (ctx) => {
-    return api.del(ctx, baseUrl, prefix)
+const del = async (req, res, next) => {
+    await api.del(req, res, baseUrl, prefix)
+    next()
 }
 
-export default {
+module.exports =  {
     get,
     post,
     put,

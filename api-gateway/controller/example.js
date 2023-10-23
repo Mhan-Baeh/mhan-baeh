@@ -1,7 +1,12 @@
 const api = require('../utils/api');
 
 const baseUrl = process.env.EXAMPLE_URI
-const prefix = "/example-api/"
+// if a request url is http://hostname/example-api/...
+// the request will be forwarded to http://{example-api_hostname}/...
+// As you can see, the prefix is removed from the url
+
+// Thus, "the predfix should match the route defined in router/router.js"
+const prefix = "/example-api/" 
 
 const get = async (req, res, next) => {
     await api.get(req, res, baseUrl, prefix)
