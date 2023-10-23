@@ -1,7 +1,7 @@
 package http
 
 import (
-	postgresModel "appointment_service/internal/models/postgres"
+	"appointment_service/internal/schemas"
 	"appointment_service/internal/services"
 	"log"
 
@@ -27,7 +27,7 @@ func (h *AppointmentHandler) GetAllAppointment(c *gin.Context) {
 }
 
 func (h *AppointmentHandler) CreateAppointment(c *gin.Context) {
-	var appointment postgresModel.Appointment
+	var appointment schemas.AppointmentRequestType
 
 	err := c.ShouldBindJSON(&appointment)
 	if err != nil {
@@ -45,6 +45,7 @@ func (h *AppointmentHandler) CreateAppointment(c *gin.Context) {
 }
 
 func (h *AppointmentHandler) UpdateAppointmentStatus(c *gin.Context) {
+
 	var id string = c.Param("id")
 	log.Default().Println(id)
 	type Status struct {

@@ -87,7 +87,7 @@ func generateToken(customer models.Customer) string {
 	secret := os.Getenv("JWT_SECRET")
 	// Define the claims
 	claims := jwt.MapClaims{
-		"customer_id": customer.CustomerID,
+		"uuid": customer.CustomerID,
 		"email":       customer.Email,
 		"role":        "customer",
 		"exp":         time.Now().Add(time.Hour * 2).Unix(),

@@ -46,7 +46,6 @@ func (s *AppointmentService) GetAllAppointment() ([]*schema.AppointmentReturnTyp
 		customerResponse, err := customerClient.GetCustomer(context.Background(), &pb.GetCustomerRequest{
 			CustomerId: dbAppointment.CustomerId.String(),
 		})
-		
 
 		var customer *schema.CustomerReturnType
 		if err != nil {
@@ -65,8 +64,6 @@ func (s *AppointmentService) GetAllAppointment() ([]*schema.AppointmentReturnTyp
 				Email:      customerResponse.Email,
 			}
 		}
-
-
 
 		// get address by id from grpc call to customer service
 		log.Printf("dbAppointment.AddressId.String(): %v", dbAppointment.AddressId.String())
@@ -126,6 +123,7 @@ func (s *AppointmentService) GetAllAppointment() ([]*schema.AppointmentReturnTyp
 			CustomerId:    dbAppointment.CustomerId,
 			HousekeeperId: dbAppointment.HousekeeperId,
 			ToDoList:      dbAppointment.ToDoList,
+			Hour:          dbAppointment.Hour,
 			Price:         dbAppointment.Price,
 			StartDateTime: dbAppointment.StartDateTime,
 			EndDateTime:   dbAppointment.EndDateTime,
@@ -142,9 +140,10 @@ func (s *AppointmentService) GetAllAppointment() ([]*schema.AppointmentReturnTyp
 	return appointments, nil
 }
 
-func (s *AppointmentService) CreateAppointment(c context.Context, appointment *postgresModel.Appointment) error {
+func (s *AppointmentService) CreateAppointment(c context.Context, appointment *schema.AppointmentRequestType) error {
 	// business checking logic
 
+	
 	// check valid customer by grpc call to customer service
 	customerClient := pb.NewCustomerServiceClient(s.csClient)
 	log.Printf("customerClient: %v", customerClient)
@@ -156,7 +155,7 @@ func (s *AppointmentService) CreateAppointment(c context.Context, appointment *p
 		return err
 	}
 	log.Printf("customerResponse: %v", customerResponse)
-
+	
 	// check if address provided is valid by grpc call to customer service
 	addressClient := pb.NewAddressServiceClient(s.csClient)
 	addressResponse, err := addressClient.GetAddress(context.Background(), &pb.GetAddressRequest{
@@ -167,15 +166,14 @@ func (s *AppointmentService) CreateAppointment(c context.Context, appointment *p
 		return err
 	}
 	log.Printf("addressResponse: %v", addressResponse)
-
+	
 	// get all housekeepers by grpc call to housekeeper service
 	housekeeperClient := pb.NewHousekeeperServiceClient(s.hkClient)
 	housekeeperResponse, err := housekeeperClient.GetAllHousekeepers(context.Background(), &pb.Empty{})
 	if err != nil {
 		log.Printf("error grpc hee: %v", err)
-
 	}
-
+	
 	// convert housekeeperResponse to array of schema.HousekeeperReturnType
 	var housekeeperResponseArr []*schema.HousekeeperReturnType
 	for _, housekeeper := range housekeeperResponse.Housekeepers {
@@ -187,7 +185,7 @@ func (s *AppointmentService) CreateAppointment(c context.Context, appointment *p
 			Password:      housekeeper.Password,
 		})
 	}
-
+	
 	// get 1 free housekeeper with intersected time range
 	// query in appointment table to get all intersected appointments
 	startTime := appointment.StartDateTime.Format(time.RFC3339)
@@ -196,10 +194,11 @@ func (s *AppointmentService) CreateAppointment(c context.Context, appointment *p
 	if err != nil {
 		return err
 	}
-
+	
 	log.Printf("intersectedAppointments: %v", intersectedAppointments)
-
+	
 	//  find housekeeper that is not in intersectedAppointments
+	var housekeeperId uuidGofr.UUID
 	for _, housekeeper := range housekeeperResponseArr {
 		isFree := true
 		for _, intersectedAppointment := range intersectedAppointments {
@@ -214,13 +213,13 @@ func (s *AppointmentService) CreateAppointment(c context.Context, appointment *p
 			if err != nil {
 				return err
 			}
-			appointment.HousekeeperId = housekeeperUUID
+			housekeeperId = housekeeperUUID
 			break
 		}
 	}
 
 	// if no free housekeeper, return error
-	if appointment.HousekeeperId == uuidGofr.Nil {
+	if housekeeperId == uuidGofr.Nil {
 		return errors.New("no free housekeeper")
 	}
 
@@ -239,10 +238,18 @@ func (s *AppointmentService) CreateAppointment(c context.Context, appointment *p
 		return errors.New("invalid to do list")
 	}
 
-	// calculate total price
-	appointment.Price = appointment.Hour * 300
-
-	return s.appointmentRepo.CreateAppointment(appointment)
+	return s.appointmentRepo.CreateAppointment(&postgresModel.Appointment{
+		CustomerId:    uuidGofr.UUID(appointment.CustomerId),
+		HousekeeperId: housekeeperId,
+		AddressId:     uuidGofr.UUID(appointment.AddressId),
+		StartDateTime: appointment.StartDateTime,
+		EndDateTime:   appointment.EndDateTime,
+		Hour:          appointment.Hour,
+		Price:         appointment.Hour * 300,
+		Status:        postgresModel.AppointmentStatus(appointment.Status),
+		Note:          appointment.Note,
+		ToDoList:      appointment.ToDoList,
+	})
 }
 
 func (s *AppointmentService) UpdateAppointmentStatus(c context.Context, id string, status string) error {
@@ -331,6 +338,7 @@ func (s *AppointmentService) GetAppointmentById(id string) (*schema.AppointmentR
 		CustomerId:    appointment.CustomerId,
 		HousekeeperId: appointment.HousekeeperId,
 		ToDoList:      appointment.ToDoList,
+		Hour:          appointment.Hour,
 		Price:         appointment.Price,
 		StartDateTime: appointment.StartDateTime,
 		EndDateTime:   appointment.EndDateTime,
