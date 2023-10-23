@@ -3,13 +3,12 @@ import {
   useDataGrid,
   DataGrid,
   GridColumns,
-  ShowButton,
   List,
-  DeleteButton,
   Typography,
+  EditButton,
 } from "@pankod/refine-mui";
 
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export const AppointmentList = () => {
   const { dataGridProps } = useDataGrid({ queryOptions: { retry: false } });
@@ -17,16 +16,16 @@ export const AppointmentList = () => {
   const columns = React.useMemo<GridColumns<any>>(
     () => [
       {
-        field: "name",
-        headerName: "Housekeeper name",
-        type: "number",
+        field: "start_date_time",
+        headerName: "Start Date",
+        type: "string",
         align: "center",
         headerAlign: "center",
         minWidth: 200,
       },
       {
-        field: "phone",
-        headerName: "Phone Number",
+        field: "end_date_time",
+        headerName: "End Date",
         type: "string",
         align: "center",
         headerAlign: "center",
@@ -35,15 +34,7 @@ export const AppointmentList = () => {
       {
         field: "hour",
         headerName: "Hour",
-        type: "number",
-        align: "center",
-        headerAlign: "center",
-        minWidth: 100,
-      },
-      {
-        field: "price",
-        headerName: "Price",
-        type: "number",
+        type: "string",
         align: "center",
         headerAlign: "center",
         minWidth: 100,
@@ -65,36 +56,12 @@ export const AppointmentList = () => {
         minWidth: 150,
       },
       {
-        field: "start_date_time",
-        headerName: "Start",
-        type: "string",
-        align: "center",
-        headerAlign: "center",
-        minWidth: 150,
-        renderCell: function render({ value }) {
-          const date = new Date(value);
-          return date.toLocaleString();
-        },
-      },
-      {
-        field: "end_date_time",
-        headerName: "End",
-        type: "string",
-        align: "center",
-        headerAlign: "center",
-        minWidth: 150,
-        renderCell: function render({ value }) {
-          const date = new Date(value);
-          return date.toLocaleString();
-        },
-      },
-      {
         field: "actions",
         headerName: "Actions",
         renderCell: function render({ row }) {
           return (
             <>
-              <DeleteButton hideText recordItemId={row.appointment_id} />
+              <EditButton hideText recordItemId={row.product_uuid} />
             </>
           );
         },
@@ -109,12 +76,18 @@ export const AppointmentList = () => {
   );
   return (
     <div className="p-5">
-      <List title={
-        <div className="flex justify-between items-center">
-          <Typography variant="h5">Appointments</Typography>
-          <Link className="flex no-underline p-2 shadow-md rounded-md text-sm text-white bg-blue-700" to="/hirings">Create Appointment</Link>
-        </div>
-      }
+      <List
+        title={
+          <div className="flex justify-between items-center">
+            <Typography variant="h5">Appointments</Typography>
+            {/* <Link
+              className="flex no-underline p-2 shadow-md rounded-md text-sm text-white bg-blue-700"
+              to="/hirings"
+            >
+              Create Appointment
+            </Link> */}
+          </div>
+        }
       >
         <DataGrid
           {...dataGridProps}

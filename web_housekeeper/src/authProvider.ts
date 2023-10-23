@@ -1,11 +1,11 @@
 import { AuthProvider } from "@pankod/refine-core";
 import { axiosInstance } from "@pankod/refine-simple-rest";
-import { REST_PUBLIC_URI } from "environment";
+import { REST_PUBLIC_URL } from "environment";
 
 const authProvider: AuthProvider = {
   login: async ({ email, password }) => {
     const response = await axiosInstance.post(
-      `${REST_PUBLIC_URI}/api/login`,
+      `${REST_PUBLIC_URL}/api/login`,
       {
         email,
         password,
@@ -19,9 +19,9 @@ const authProvider: AuthProvider = {
 
     return Promise.reject("/");
   },
-  register: async({email, name, phone, password, confirmPassword}) =>{
+  register: async ({ email, name, phone, password, confirmPassword }) => {
     const response = await axiosInstance.post(
-      `${REST_PUBLIC_URI}/api/register`,
+      `${REST_PUBLIC_URL}/api/register`,
       {
         email,
         name,
@@ -34,7 +34,7 @@ const authProvider: AuthProvider = {
       return Promise.resolve("/");
     }
     return Promise.reject("/");
-    
+
   },
   checkAuth: () => {
     const user = localStorage.getItem("auth");
@@ -47,7 +47,7 @@ const authProvider: AuthProvider = {
   },
   logout: async () => {
     const response = await axiosInstance.post(
-      `${REST_PUBLIC_URI}/api/logout`
+      `${REST_PUBLIC_URL}/api/logout`
     );
     if (response.status === 200) {
       localStorage.removeItem("auth");

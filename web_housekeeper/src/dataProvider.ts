@@ -21,7 +21,7 @@ const dataProvider = (
     filters,
     sort,
   }) => {
-    const url = `${apiUrl}/${resource}/`;
+    const url = `${apiUrl}/http/${resource}/`;
 
     const { current = 1, pageSize = 10 } = pagination ?? {};
 
@@ -33,11 +33,11 @@ const dataProvider = (
       _sort?: string;
       _order?: string;
     } = hasPagination
-      ? {
+        ? {
           skip: (current - 1) * pageSize,
           limit: pageSize,
         }
-      : {};
+        : {};
 
     const generatedSort = generateSort(sort);
     if (generatedSort) {
@@ -47,8 +47,9 @@ const dataProvider = (
     }
 
     const { data } = await httpClient.get(
-      `${url}?${stringify(query)}&${stringify(queryFilters)}`
+      `${url}`
     );
+
 
     const total = data.data?.total;
     return {
@@ -59,7 +60,7 @@ const dataProvider = (
 
   getMany: async ({ resource, ids }) => {
     const { data } = await httpClient.get(
-      `${apiUrl}/${resource}?${stringify({ id: ids })}`
+      `${apiUrl}/http/${resource}?${stringify({ id: ids })}`
     );
 
     return {
@@ -68,7 +69,7 @@ const dataProvider = (
   },
 
   create: async ({ resource, variables }) => {
-    const url = `${apiUrl}/${resource}`;
+    const url = `${apiUrl}/http/${resource}`;
 
     const { data } = await httpClient.post(url, variables);
 
@@ -78,11 +79,11 @@ const dataProvider = (
   },
 
   update: async ({ resource, id, variables }) => {
-    const url = `${apiUrl}/${resource}`;
+    const url = `${apiUrl}/http/${resource}`;
     if (resource.endsWith("s")) {
       resource = resource.slice(0, -1);
     }
-    const { data } = await httpClient.put(url, { ...variables, [`${resource}_uuid`]:id });
+    const { data } = await httpClient.put(url, { ...variables, [`${resource}_uuid`]: id });
 
     return {
       data,
@@ -94,7 +95,7 @@ const dataProvider = (
 
     const { data } = await httpClient.get(url);
 
-    if (!!data?.status_code &&!!data?.data) {
+    if (!!data?.status_code && !!data?.data) {
       return {
         data: data?.data,
       };
