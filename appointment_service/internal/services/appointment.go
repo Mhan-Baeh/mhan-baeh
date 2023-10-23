@@ -38,8 +38,35 @@ func (s *AppointmentService) GetAllAppointment() ([]*schema.AppointmentReturnTyp
 
 	addressClient := pb.NewAddressServiceClient(s.csClient)
 	housekeeperClient := pb.NewHousekeeperServiceClient(s.hkClient)
+	customerClient := pb.NewCustomerServiceClient(s.csClient)
 
 	for _, dbAppointment := range dbAppointments {
+
+		log.Printf("customerClient: %v", customerClient)
+		customerResponse, err := customerClient.GetCustomer(context.Background(), &pb.GetCustomerRequest{
+			CustomerId: dbAppointment.CustomerId.String(),
+		})
+		
+
+		var customer *schema.CustomerReturnType
+		if err != nil {
+			log.Printf("error grpc hee: %v", err)
+			customer = &schema.CustomerReturnType{
+				CustomerId: "NOT FOUND",
+				Name:       "NOT FOUND",
+				Phone:      "NOT FOUND",
+				Email:      "NOT FOUND",
+			}
+		} else {
+			customer = &schema.CustomerReturnType{
+				CustomerId: customerResponse.CustomerId,
+				Name:       customerResponse.Name,
+				Phone:      customerResponse.Phone,
+				Email:      customerResponse.Email,
+			}
+		}
+
+
 
 		// get address by id from grpc call to customer service
 		log.Printf("dbAppointment.AddressId.String(): %v", dbAppointment.AddressId.String())
@@ -106,6 +133,9 @@ func (s *AppointmentService) GetAllAppointment() ([]*schema.AppointmentReturnTyp
 			AddressId:     dbAppointment.AddressId,
 			Address:       address,
 			Housekeeper:   housekeeper,
+			Customer:      customer,
+			CreatedAt:     dbAppointment.CreatedAt,
+			UpdatedAt:     dbAppointment.UpdatedAt,
 		}
 		appointments = append(appointments, appointment)
 	}
@@ -306,6 +336,8 @@ func (s *AppointmentService) GetAppointmentById(id string) (*schema.AppointmentR
 		EndDateTime:   appointment.EndDateTime,
 		Status:        schema.AppointmentStatus(appointment.Status),
 		AddressId:     appointment.AddressId,
+		CreatedAt:     appointment.CreatedAt,
+		UpdatedAt:     appointment.UpdatedAt,
 		Address: &schema.AddressReturnType{
 			AddressID:  addressResponse.AddressId,
 			CustomerID: addressResponse.CustomerId,
