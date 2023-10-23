@@ -5,6 +5,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/lib/pq"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type AppointmentStatus string
@@ -50,4 +51,19 @@ type AppointmentReturnType struct {
 
 	Address     *AddressReturnType     `json:"address"`
 	Housekeeper *HousekeeperReturnType `json:"housekeeper"`
+	Customer    *CustomerReturnType    `json:"customer"`
+	Job         []*JobReturnType       `json:"job"`
+}
+
+type JobReturnType struct {
+	JobId   primitive.ObjectID `json:"job_id"`
+	JobName string             `json:"job_name"`
+	JobRate int                `json:"job_rate"`
+}
+
+type CustomerReturnType struct {
+	CustomerId string `json:"customer_id"`
+	Name       string `json:"name"`
+	Phone      string `json:"phone"`
+	Email      string `json:"email"`
 }

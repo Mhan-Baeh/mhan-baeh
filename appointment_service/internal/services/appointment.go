@@ -10,8 +10,8 @@ import (
 
 	"context"
 
-	uuidGoogle "github.com/google/uuid"
 	uuidGofr "github.com/gofrs/uuid"
+	uuidGoogle "github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 
@@ -158,7 +158,6 @@ func (s *AppointmentService) CreateAppointment(c context.Context, appointment *p
 		})
 	}
 
-
 	// get 1 free housekeeper with intersected time range
 	// query in appointment table to get all intersected appointments
 	startTime := appointment.StartDateTime.Format(time.RFC3339)
@@ -231,4 +230,103 @@ func (s *AppointmentService) UpdateAppointmentStatus(c context.Context, id strin
 
 	return s.appointmentRepo.UpdateAppointment(dbAppointment)
 
+}
+
+func (s *AppointmentService) GetAppointmentById(id string) (*schema.AppointmentReturnType, error) {
+
+	// convert id to uuid
+	idUUID, err := uuidGoogle.Parse(id)
+	if err != nil {
+		return nil, err
+	}
+	// get appointment by id from postgres
+	appointment, err := s.appointmentRepo.GetAppointmentById(idUUID)
+	if err != nil {
+		return nil, err
+	}
+
+	// get customer by id from grpc call to customer service
+
+	customerClient := pb.NewCustomerServiceClient(s.csClient)
+	log.Printf("customerClient: %v", customerClient)
+	customerResponse, err := customerClient.GetCustomer(context.Background(), &pb.GetCustomerRequest{
+		CustomerId: appointment.CustomerId.String(),
+	})
+	if err != nil {
+		log.Printf("error grpc hee: %v", err)
+		return nil, err
+	}
+	// get address by id from grpc call to customer service
+	addressClient := pb.NewAddressServiceClient(s.csClient)
+	log.Printf("addressClient: %v", addressClient)
+	addressResponse, err := addressClient.GetAddress(context.Background(), &pb.GetAddressRequest{
+		AddressId: appointment.AddressId.String(),
+	})
+	if err != nil {
+		log.Printf("error grpc hee: %v", err)
+		return nil, err
+	}
+
+	// get housekeeper by id from grpc call to housekeeper service
+	housekeeperClient := pb.NewHousekeeperServiceClient(s.hkClient)
+	housekeeperResponse, err := housekeeperClient.GetHousekeeperByUuid(context.Background(), &pb.GetHousekeeperRequest{
+		HousekeeperUuid: appointment.HousekeeperId.String(),
+	})
+
+	if err != nil {
+		log.Printf("error grpc hee: %v", err)
+		return nil, err
+	}
+
+	// get job by ids from mongo
+	jobs, err := s.jobRepo.GetJobByIds(context.Background(), appointment.ToDoList)
+	if err != nil {
+		log.Printf("error grpc hee: %v", err)
+		return nil, err
+	}
+
+	// convert jobs to array of schema.JobReturnType
+	var jobsArr []*schema.JobReturnType
+	for _, job := range jobs {
+		jobsArr = append(jobsArr, &schema.JobReturnType{
+			JobId:   job.JobId,
+			JobName: job.JobName,
+			JobRate: job.JobRate,
+		})
+	}
+
+	// convert appointment to schema.AppointmentReturnType
+	appointmentReturn := &schema.AppointmentReturnType{
+		AppointmentId: appointment.AppointmentId,
+		CustomerId:    appointment.CustomerId,
+		HousekeeperId: appointment.HousekeeperId,
+		ToDoList:      appointment.ToDoList,
+		Price:         appointment.Price,
+		StartDateTime: appointment.StartDateTime,
+		EndDateTime:   appointment.EndDateTime,
+		Status:        schema.AppointmentStatus(appointment.Status),
+		AddressId:     appointment.AddressId,
+		Address: &schema.AddressReturnType{
+			AddressID:  addressResponse.AddressId,
+			CustomerID: addressResponse.CustomerId,
+			Name:       addressResponse.Name,
+			Address:    addressResponse.Address,
+			Note:       addressResponse.Note,
+			HouseSize:  addressResponse.HouseSize,
+		},
+		Housekeeper: &schema.HousekeeperReturnType{
+			HousekeeperId: housekeeperResponse.HousekeeperUuid,
+			Name:          housekeeperResponse.Name,
+			Phone:         housekeeperResponse.Phone,
+			Email:         housekeeperResponse.Email,
+		},
+		Customer: &schema.CustomerReturnType{
+			CustomerId: customerResponse.CustomerId,
+			Name:       customerResponse.Name,
+			Phone:      customerResponse.Phone,
+			Email:      customerResponse.Email,
+		},
+		Job: jobsArr,
+	}
+	return appointmentReturn, nil
 }
