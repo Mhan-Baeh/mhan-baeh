@@ -1,16 +1,22 @@
 const express = require('express')
+const cors = require("cors")
+const { getCORSOption } = require("../utils/cors")
 const exampleRouter = require('./example')
 const adminRouter = require('./admin')
 const customerRouter = require('./customer')
 const housekeeperRouter = require('./housekeeper')
 const appointmentRouter = require('./appointment')
 
+const adminOpt = getCORSOption(process.env.ADMIN_UI)
+const customerOpt = getCORSOption(process.env.CUSTOMER_UI)
+const housekeeperOpt = getCORSOption(process.env.HOUSEKEEPER_UI)
+
 const router = express.Router()
 
 router.use('/example-api', exampleRouter)
-router.use('/admin-api', adminRouter)
-router.use('/customer-api', customerRouter)
-router.use('/housekeeper-api', housekeeperRouter)
+router.use('/admin-api', cors(adminOpt),adminRouter)
+router.use('/customer-api', cors(customerOpt), customerRouter)
+router.use('/housekeeper-api', cors(housekeeperOpt), housekeeperRouter)
 router.use('/appointment-api', appointmentRouter)
 
 module.exports = router
