@@ -1,11 +1,9 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const cookieParser = require('cookie-parser');
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser())
 
 const users = ["user1"];
 const secretKey = "hehe"; // Replace with your own secret key
@@ -22,8 +20,8 @@ const success = (req, res) => {
 };
 
 const authenticateToken = (req, res, next) => {
-    const token = req.cookies.token;
-    console.log(token)
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
     if (token == null) return res.sendStatus(401);
 
     jwt.verify(token, secretKey, (err, user) => {
@@ -39,7 +37,8 @@ const register = (req, res) => {
         res.status(400).json({ error: "User already exists" });
     } else {
         users.push(username);
-        res.status(201).json({ message: "User registered successfully" });
+        const token = jwt.sign({ username }, secretKey);
+        res.status(201).json({ token: token, message: "User registered successfully" });
     }
 };
 
@@ -47,8 +46,7 @@ const login = (req, res) => {
     const { username } = req.body;
     if (users.includes(username)) {
         const token = jwt.sign({ username }, secretKey);
-        res.cookie('token', token, { httpOnly: true, secure: true });
-        res.status(200).json({ message: "Login successful" });
+        res.status(200).json({ token: token, message: "Login successful" });
     } else {
         res.status(401).json({ error: "User not found" });
     }

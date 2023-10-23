@@ -65,3 +65,14 @@ func (h *AppointmentHandler) UpdateAppointmentStatus(c *gin.Context) {
 
 	c.JSON(200, gin.H{"message": "OK"})
 }
+
+func (h *AppointmentHandler) GetAppointmentById(c *gin.Context) {
+	var id string = c.Param("id")
+	appointment, err := h.service.GetAppointmentById( id)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"data": appointment})
+}

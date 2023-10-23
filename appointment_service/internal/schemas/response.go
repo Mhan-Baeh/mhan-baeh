@@ -5,6 +5,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/lib/pq"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type AppointmentStatus string
@@ -19,10 +20,18 @@ const (
 type AddressReturnType struct {
 	AddressID  string `json:"address_id"`
 	CustomerID string `json:"customer_id"`
-	Name       string    `json:"name"`
-	Address    string    `json:"address"`
-	Note       string    `json:"note"`
-	HouseSize  string       `json:"house_size"`
+	Name       string `json:"name"`
+	Address    string `json:"address"`
+	Note       string `json:"note"`
+	HouseSize  string `json:"house_size"`
+}
+
+type HousekeeperReturnType struct {
+	HousekeeperId string `json:"housekeeper_id"`
+	Name          string `json:"name"`
+	Phone         string `json:"phone"`
+	Email         string `json:"email"`
+	Password      string `json:"password"`
 }
 
 type AppointmentReturnType struct {
@@ -40,5 +49,21 @@ type AppointmentReturnType struct {
 	CreatedAt     time.Time         `json:"created_at"`
 	UpdatedAt     time.Time         `json:"updated_at"`
 
-	Address *AddressReturnType `json:"address"`
+	Address     *AddressReturnType     `json:"address"`
+	Housekeeper *HousekeeperReturnType `json:"housekeeper"`
+	Customer    *CustomerReturnType    `json:"customer"`
+	Job         []*JobReturnType       `json:"job"`
+}
+
+type JobReturnType struct {
+	JobId   primitive.ObjectID `json:"job_id"`
+	JobName string             `json:"job_name"`
+	JobRate int                `json:"job_rate"`
+}
+
+type CustomerReturnType struct {
+	CustomerId string `json:"customer_id"`
+	Name       string `json:"name"`
+	Phone      string `json:"phone"`
+	Email      string `json:"email"`
 }
