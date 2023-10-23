@@ -85,7 +85,7 @@ func (housekeeperService *housekeeperService) LoginHousekeeper(req *request.Logi
 	}
 
 	claims := map[string]interface{}{}
-	claims["housekeeper_uuid"] = housekeeper.Housekeeper_uuid.String()
+	claims["uuid"] = housekeeper.Housekeeper_uuid.String()
 	claims["email"] = housekeeper.Email
 	claims["role"] = "housekeeper"
 	token, err := GenerateLoginToken(claims, true)

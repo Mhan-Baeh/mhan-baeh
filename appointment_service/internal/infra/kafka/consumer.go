@@ -2,7 +2,7 @@ package kafka
 
 import (
 	"appointment_service/internal/config"
-	postgresModel "appointment_service/internal/models/postgres"
+	"appointment_service/internal/schemas"
 	"appointment_service/internal/services"
 	"context"
 	"encoding/json"
@@ -41,7 +41,7 @@ func (c *Consumer) Start() {
 		log.Printf("Received message: %s", string(m.Value))
 
 		// Process the message to create an appointment
-		var appointment postgresModel.Appointment
+		var appointment schemas.AppointmentRequestType
 
 		// Unmarshal the JSON message into the appointment struct
 		err = json.Unmarshal(m.Value, &appointment)

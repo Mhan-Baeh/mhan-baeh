@@ -86,7 +86,7 @@ func (adminService *adminService) LoginAdmin(req *request.LoginAdminRequest) (lo
 	}
 
 	claims := map[string]interface{}{}
-	claims["admin_uuid"] = admin.Admin_uuid.String()
+	claims["uuid"] = admin.Admin_uuid.String()
 	claims["email"] = admin.Email
 	claims["role"] = "admin"
 	token, err := GenerateLoginToken(claims, true)
