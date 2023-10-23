@@ -1,7 +1,6 @@
 import { useForm } from "@pankod/refine-react-hook-form";
 import * as React from "react";
 import {
-  RegisterFormTypes,
   RegisterPageProps,
   BaseRecord,
   HttpError,
@@ -9,6 +8,7 @@ import {
   useRouterContext,
   useRegister,
 } from "@pankod/refine-core";
+import {RegisterFormTypes} from "../../../../interfaces/auth"
 import {
   Button,
   TextField,
@@ -92,16 +92,15 @@ export const RegisterPage: React.FC<RegisterProps> = ({
   };
 
   const Content = (
-    <Card {...(contentProps ?? {})}>
-      <CardContent sx={{ paddingX: "32px" }}>
+    <Card className="w-full py-3 rounded-2xl shadow-xl px-8 sm:px-16" {...(contentProps ?? {})}>
+      <div className="flex flex-col">
         <Typography
           component="h1"
-          variant="h5"
           align="center"
           style={titleStyles}
-          color="primary"
+          color="black"
         >
-          {translate("pages.register.title", "Sign up for your account")}
+          {translate("pages.register.title", "Register")}
         </Typography>
         {renderProviders()}
         <Box
@@ -113,8 +112,12 @@ export const RegisterPage: React.FC<RegisterProps> = ({
 
             return registerMutate(data);
           })}
-          gap="16px"
         >
+          <Typography
+            color="black"
+          >
+            Email
+          </Typography>
           <TextField
             {...register("email", {
               required: true,
@@ -127,64 +130,155 @@ export const RegisterPage: React.FC<RegisterProps> = ({
               },
             })}
             id="email"
-            margin="normal"
             fullWidth
-            label={translate("pages.register.email", "Email")}
+            placeholder="your_email@gmail.com"
             error={!!errors.email}
             helperText={errors["email"] ? errors["email"].message : ""}
             name="email"
             autoComplete="email"
+            sx={{
+              "& .MuiInputBase-root": {
+                border: "0px solid #ccc",
+                borderRadius: 0,
+                height: "40px",
+              },
+            }}
+            className="shadow-md"
           />
+          <Typography
+            color="black"
+            className="mt-3"
+          >
+            Name
+          </Typography>
+          <TextField
+            {...register("name", {
+              required: true,
+            })}
+            id="name"
+            fullWidth
+            name="name"
+            helperText={errors?.name?.message}
+            error={!!errors.name}
+            placeholder="Martin Carly"
+            autoComplete="name"
+            sx={{
+              "& .MuiInputBase-root": {
+                border: "0px solid #ccc",
+                borderRadius: 0,
+                height: "40px",
+              },
+            }}
+            className="shadow-md"
+          />
+          <Typography
+            color="black"
+            className="mt-3"
+          >
+            Phone
+          </Typography>
+          <TextField
+            {...register("phone", {
+              required: true,
+              pattern: {
+                value: /^\d{3}-\d{3}-\d{4}$/,
+                message: "Invalid phone number",
+              },
+            })}
+            id="phone"
+            fullWidth
+            name="phone"
+            helperText={errors?.phone?.message}
+            error={!!errors.phone}
+            placeholder="xxx-xxx-xxxx"
+            autoComplete="phone"
+            sx={{
+              "& .MuiInputBase-root": {
+                border: "0px solid #ccc",
+                borderRadius: 0,
+                height: "40px",
+              },
+            }}
+            className="shadow-md"
+          />
+          <Typography
+            color="black"
+            className="mt-3"
+          >
+            Password
+          </Typography>
           <TextField
             {...register("password", {
               required: true,
             })}
             id="password"
-            margin="normal"
             fullWidth
             name="password"
-            label={translate("pages.register.fields.password", "Password")}
             helperText={errors["password"] ? errors["password"].message : ""}
             error={!!errors.password}
             type="password"
             placeholder="●●●●●●●●"
             autoComplete="current-password"
+            sx={{
+              "& .MuiInputBase-root": {
+                border: "0px solid #ccc",
+                borderRadius: 0,
+                height: "40px",
+              },
+            }}
+            className="shadow-md"
+          />
+          <Typography
+            color="black"
+            className="mt-3"
+          >
+            Confirm Password
+          </Typography>
+          <TextField
+            {...register("confirmPassword", {
+              required: true,
+            })}
+            id="confirmPassword"
+            fullWidth
+            name="confirmPassword"
+            helperText={errors["confirmPassword"] ? errors["confirmPassword"].message : ""}
+            error={!!errors.confirmPassword}
+            type="password"
+            placeholder="●●●●●●●●"
+            autoComplete="current-password"
+            sx={{
+              "& .MuiInputBase-root": {
+                border: "0px solid #ccc",
+                borderRadius: 0,
+                height: "40px",
+              },
+            }}
+            className="shadow-md"
           />
 
           {loginLink ?? (
-            <Box display="flex" justifyContent="flex-end">
-              <Typography variant="body2" component="span">
-                {translate(
-                  "pages.login.buttons.haveAccount",
-                  "Have an account?"
-                )}
-              </Typography>
-              <MuiLink
-                ml="6px"
-                variant="body2"
-                component={Link}
-                underline="none"
-                to="/login"
-                fontWeight="bold"
-              >
-                {translate("pages.login.signin", "Sign in")}
-              </MuiLink>
+            <Box display="flex" justifyContent="flex-start">
+              <div className="flex justify-between mb-5 mt-3">
+                <Link to="/" className="flex text-xs no-underline text-blue-600 font-thin">Already has an account?</Link>
+              </div>
             </Box>
           )}
           <Button
             type="submit"
             fullWidth
             variant="contained"
+            color="error"
             sx={{
               my: "8px",
-              color: "white",
+              p:"8px",
+              backgroundColor: "#DC2434"
             }}
             disabled={isLoading}
           >
-            {translate("pages.register.signup", "Sign up")}
+            register
           </Button>
         </Box>
-      </CardContent>
+      </div>
     </Card>
   );
 
@@ -192,14 +286,19 @@ export const RegisterPage: React.FC<RegisterProps> = ({
     <Box component="div" style={layoutStyles} {...(wrapperProps ?? {})}>
       <Container
         component="main"
-        maxWidth="xs"
+        maxWidth="sm"
         sx={{
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
           height: "100vh",
+          backgroundColor: "transparent",
+          gap: "0.5rem",
         }}
       >
+        <div className="flex justify-center">
+          <img className="w-11/12" src="mhanbae.png" alt="mhanbae" />
+        </div>
         {renderContent ? renderContent(Content) : Content}
       </Container>
     </Box>

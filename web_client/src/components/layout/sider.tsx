@@ -179,28 +179,23 @@ export const Sider: React.FC<RefineLayoutSiderProps> = ({ render }) => {
                 py: isNested ? 1.25 : 1,
                 "&.Mui-selected": {
                   "&:hover": {
-                    backgroundColor: "transparent",
+                    backgroundColor: "#BFD5F8",
                   },
-                  backgroundColor: "transparent",
+                  backgroundColor: "#BFD5F8",
                 },
                 justifyContent: "center",
+                borderBottom: "1px solid #ccc"
               }}
+              
             >
-              <ListItemIcon
-                sx={{
-                  justifyContent: "center",
-                  minWidth: 36,
-                  color: "primary.contrastText",
-                }}
-              >
-                {icon ?? <ListOutlined />}
-              </ListItemIcon>
               <ListItemText
                 primary={label}
                 primaryTypographyProps={{
                   noWrap: true,
                   fontSize: "14px",
-                  fontWeight: isSelected ? "bold" : "normal",
+                  fontWeight: isSelected ? "800" : "normal",
+                  textAlign: "center",
+                  color: "#142880",
                 }}
               />
             </ListItemButton>
@@ -349,13 +344,13 @@ export const Sider: React.FC<RefineLayoutSiderProps> = ({ render }) => {
             display: { sm: "block", md: "none" },
             "& .MuiDrawer-paper": {
               width: 256,
-              bgcolor: "primary.main",
+              bgcolor: "#D9EEFF",
             },
           }}
         >
           <Box
             sx={{
-              height: 64,
+              height: 100,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -372,7 +367,7 @@ export const Sider: React.FC<RefineLayoutSiderProps> = ({ render }) => {
             display: { xs: "none", md: "block" },
             "& .MuiDrawer-paper": {
               width: drawerWidth,
-              bgcolor: "primary.main",
+              bgcolor: "#D9EEFF",
               overflow: "hidden",
               transition: "width 200ms cubic-bezier(0.4, 0, 0.6, 1) 0ms",
             },
@@ -381,7 +376,7 @@ export const Sider: React.FC<RefineLayoutSiderProps> = ({ render }) => {
         >
           <Box
             sx={{
-              height: 64,
+              height: 100,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -400,15 +395,16 @@ export const Sider: React.FC<RefineLayoutSiderProps> = ({ render }) => {
           </Box>
           <Button
             sx={{
-              background: "rgba(0,0,0,.5)",
+              background: "#142880",
               color: "primary.contrastText",
               textAlign: "center",
               borderRadius: 0,
-              borderTop: "1px solid #ffffff1a",
+              borderTop: "1px solid #ffffff1a", 
             }}
             fullWidth
             size="large"
             onClick={() => setCollapsed((prev) => !prev)}
+            className="hover:bg-blue-700"
           >
             {collapsed ? <ChevronRight /> : <ChevronLeft />}
           </Button>
@@ -420,13 +416,13 @@ export const Sider: React.FC<RefineLayoutSiderProps> = ({ render }) => {
             top: "64px",
             left: "0px",
             borderRadius: "0 6px 6px 0",
-            bgcolor: "primary.main",
+            bgcolor: "#D9EEFF",
             zIndex: 1199,
             width: "36px",
           }}
         >
           <IconButton
-            sx={{ color: "#fff", width: "36px" }}
+            sx={{ color: "#142880", width: "36px" }}
             onClick={() => setOpened((prev) => !prev)}
           >
             <MenuRounded />

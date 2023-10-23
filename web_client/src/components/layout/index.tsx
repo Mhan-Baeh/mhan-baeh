@@ -21,16 +21,15 @@ export const Layout: React.FC<RefineLayoutLayoutProps> = ({
           display: "flex",
           flexDirection: "column",
           flex: 1,
-          minHeight: "100vh",
         }}
       >
         <HeaderToRender />
         <Box
           component="main"
           sx={{
-            p: { xs: 1, md: 2, lg: 3 },
             flexGrow: 1,
-            bgcolor: (theme) => theme.palette.background.default,
+            bgcolor: "white",
+            minHeight:"100vh",
           }}
         >
           {children}

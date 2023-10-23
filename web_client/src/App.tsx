@@ -11,22 +11,16 @@ import routerProvider from "@pankod/refine-react-router-v6";
 import dataProvider from "dataProvider";
 import { Refine } from "@pankod/refine-core";
 import { REST_PUBLIC_URI } from "environment";
-import { ResultCreate, ResultList, ResultShow } from "pages/results";
 import { Layout } from "components/layout";
 import { primaryTheme } from "themes/primary";
 
-import {
-  ProductList,
-  ProductCreate,
-  ProductShow,
-  ProductEdit,
-} from "pages/products";
 import { StyledEngineProvider } from "@mui/material/styles";
 import "index.css";
 import "react-toastify/dist/ReactToastify.css";
 import { notificationProvider } from "providers/notificationProvider";
 import { ToastContainer } from "react-toastify";
 import authProvider from "authProvider";
+import { HomeShow } from "pages/homes/";
 
 function App() {
   return (
@@ -37,8 +31,8 @@ function App() {
 
         <RefineSnackbarProvider>
           <Refine
-            LoginPage={AuthPage}
-            authProvider={authProvider}
+            // LoginPage={AuthPage}
+            // authProvider={authProvider}
             dataProvider={dataProvider(`${REST_PUBLIC_URI}`)}
             routerProvider={{
               ...routerProvider,
@@ -46,6 +40,16 @@ function App() {
                 {
                   path: "/login",
                   element: <AuthPage type="login"/>
+                },
+                {
+                  path: "/register",
+                  element: <AuthPage type="register"/>
+                
+                },
+                {
+                  path: "/forgotPassword",
+                  element: <AuthPage type="forgotPassword"/>
+                
                 }
               ]
             }}
@@ -55,24 +59,33 @@ function App() {
             catchAll={<ErrorComponent />}
             resources={[
               {
-                name: "products",
+                name: "homes",
                 options: {
-                  label: "Product",
+                  label: "HOME"
                 },
-                list: ProductList,
-                create: ProductCreate,
-                show: ProductShow,
-                edit: ProductEdit,
+                list: HomeShow,
               },
               {
-                name: "results",
+                name: "hirings",
                 options: {
-                  label: "Video Checking",
+                  label: "Hiring"
                 },
-                list: ResultList,
-                create: ResultCreate,
-                show: ResultShow,
+                list: HomeShow,
               },
+              {
+                name: "appointments",
+                options: {
+                  label: "My Appointment"
+                },
+                list: HomeShow,
+              },
+              {
+                name: "accounts",
+                options: {
+                  label: "My Account"
+                },
+                list: HomeShow,
+              }
             ]}
           >
             <ToastContainer />

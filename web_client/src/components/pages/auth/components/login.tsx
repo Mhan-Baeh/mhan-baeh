@@ -22,7 +22,6 @@ import {
   TextField,
   Typography,
   Divider,
-  Link as MuiLink,
 } from "@pankod/refine-mui";
 import { FormPropsType } from "../index";
 import { layoutStyles, titleStyles } from "./styles";
@@ -88,7 +87,10 @@ export const LoginPage: React.FC<LoginProps> = ({
   };
 
   const Content = (
-    <Card className="w-full p-3 rounded-2xl shadow-xl" {...(contentProps ?? {})}>
+    <Card
+      className="w-full py-3 rounded-2xl shadow-xl px-8 sm:px-16 "
+      {...(contentProps ?? {})}
+    >
       <div className="flex flex-col">
         <Typography
           component="h1"
@@ -107,15 +109,19 @@ export const LoginPage: React.FC<LoginProps> = ({
 
             return login(data);
           })}
-          gap="16px"
         >
           {renderProviders()}
+          <Typography
+            color="black"
+            className="p-0"
+          >
+            Email
+          </Typography>
           <TextField
             {...register("email", {
               required: true,
             })}
             id="email"
-            margin="normal"
             fullWidth
             placeholder="your_email@gmail.com"
             error={!!errors.email}
@@ -123,26 +129,40 @@ export const LoginPage: React.FC<LoginProps> = ({
             type="email"
             autoComplete="email"
             sx={{
-              "& .MuiInputBase-root":{
-                border: "1px solid #ccc",
+              "& .MuiInputBase-root": {
+                border: "0px solid #ccc",
                 borderRadius: 0,
-              }
+                height: "40px",
+              },
             }}
+            className="shadow-md"
           />
+          <Typography
+            color="black"
+            className="mt-3"
+          >
+            Password
+          </Typography>
           <TextField
             {...register("password", {
               required: true,
             })}
             id="password"
-            margin="normal"
             fullWidth
             name="password"
-            label={translate("pages.login.fields.password", "Password")}
             helperText={errors?.password?.message}
             error={!!errors.password}
             type="password"
             placeholder="●●●●●●●●"
             autoComplete="current-password"
+            sx={{
+              "& .MuiInputBase-root": {
+                border: "0px solid #ccc",
+                borderRadius: 0,
+                height: "40px",
+              },
+            }}
+            className="shadow-md"
           />
           <Box
             component="div"
@@ -152,16 +172,23 @@ export const LoginPage: React.FC<LoginProps> = ({
               alignItems: "center",
             }}
           ></Box>
+          <div className="flex justify-between mt-3 mb-5">
+            <Link to="/register" className="flex text-xs no-underline text-blue-600 font-thin">Create a new account?</Link>
+            <Link to="/forgotpassword" className="flex text-xs no-underline text-blue-600 font-thin">Forgot your password</Link>
+          </div>
           <Button
             type="submit"
             fullWidth
             variant="contained"
+            color="error"
             sx={{
-              mt: "8px",
+              my: "8px",
+              p:"8px",
+              backgroundColor: "#DC2434"
             }}
             disabled={isLoading}
           >
-            {translate("pages.login.signin", "Sign in")}
+            login
           </Button>
         </Box>
       </div>
@@ -179,7 +206,7 @@ export const LoginPage: React.FC<LoginProps> = ({
             flexDirection: "column",
             justifyContent: "center",
             height: "100vh",
-            backgroundColor: "transparent"
+            backgroundColor: "transparent",
           }}
         >
           <Box
@@ -188,7 +215,7 @@ export const LoginPage: React.FC<LoginProps> = ({
               justifyContent: "center",
               flexDirection: "column",
               alignItems: "center",
-              gap: "2.5rem"
+              gap: "2.5rem",
             }}
           >
             <div className="flex justify-center">

@@ -10,13 +10,16 @@ export const Title: React.FC<TitleProps> = ({ collapsed }) => {
     <Button fullWidth variant="text" disableRipple>
       <Link to="/" className="no-underline">
         {collapsed ? (
-          <Typography color="white" variant="h4">
-            O
+          <Typography color="#142880" variant="h4">
+            MB
           </Typography>
         ) : (
-          <Typography color="white" variant="h4">
-            OpenVid
-          </Typography>
+            <Typography color="#142880" variant="h4" className="flex justify-center items-center gap-2">
+              <img src="logo.png" alt="logo" className="w-16 flex"/>
+              <div className="flex">
+                MB
+              </div>
+            </Typography>
         )}
       </Link>
     </Button>
