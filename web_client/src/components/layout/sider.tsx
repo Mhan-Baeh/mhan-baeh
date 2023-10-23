@@ -184,9 +184,8 @@ export const Sider: React.FC<RefineLayoutSiderProps> = ({ render }) => {
                   backgroundColor: "#BFD5F8",
                 },
                 justifyContent: "center",
-                borderBottom: "1px solid #ccc"
+                borderBottom: "1px solid #ccc",
               }}
-              
             >
               <ListItemText
                 primary={label}
@@ -264,24 +263,19 @@ export const Sider: React.FC<RefineLayoutSiderProps> = ({ render }) => {
       <ListItemButton
         key="logout"
         onClick={() => mutateLogout()}
-        sx={{ justifyContent: "center" }}
+        sx={{ justifyContent: "center", color: "#142880" }}
       >
         <ListItemIcon
           sx={{
             justifyContent: "center",
             minWidth: 36,
-            color: "primary.contrastText",
+            color: "#142880",
           }}
         >
           <Logout />
         </ListItemIcon>
-        <ListItemText
-          primary={t("buttons.logout", "Logout")}
-          primaryTypographyProps={{
-            noWrap: true,
-            fontSize: "14px",
-          }}
-        />
+        
+        <div className="text-md">Logout</div>
       </ListItemButton>
     </Tooltip>
   );
@@ -399,7 +393,7 @@ export const Sider: React.FC<RefineLayoutSiderProps> = ({ render }) => {
               color: "primary.contrastText",
               textAlign: "center",
               borderRadius: 0,
-              borderTop: "1px solid #ffffff1a", 
+              borderTop: "1px solid #ffffff1a",
             }}
             fullWidth
             size="large"

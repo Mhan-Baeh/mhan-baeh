@@ -55,14 +55,16 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordProps> = ({
   const { Link } = useRouterContext();
 
   const Content = (
-    <Card {...(contentProps ?? {})}>
-      <CardContent sx={{ paddingX: "32px" }}>
+    <Card
+      className="w-full py-3 rounded-2xl shadow-xl px-8 sm:px-16 "
+      {...(contentProps ?? {})}
+    >
+      <div className="flex flex-col">
         <Typography
           component="h1"
-          variant="h5"
           align="center"
           style={titleStyles}
-          color="primary"
+          color="black"
         >
           {translate("pages.forgotPassword.title", "Forgot your password?")}
         </Typography>
@@ -75,7 +77,6 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordProps> = ({
 
             return mutate(data);
           })}
-          gap="16px"
         >
           <TextField
             {...register("email", {
@@ -89,39 +90,35 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordProps> = ({
               },
             })}
             id="email"
-            margin="normal"
             fullWidth
-            label={translate("pages.forgotPassword.fields.email", "Email")}
+            placeholder="your_email@gmail.com"
             name="email"
             type="email"
             error={!!errors.email}
             autoComplete="email"
+            sx={{
+              "& .MuiInputBase-root": {
+                border: "0px solid #ccc",
+                borderRadius: 0,
+                height: "40px",
+              },
+            }}
+            className="shadow-md"
           />
           {loginLink ?? (
-            <Box textAlign="right">
-              <Typography variant="body2" component="span">
-                {translate(
-                  "pages.register.buttons.haveAccount",
-                  "Have an account?"
-                )}
-              </Typography>{" "}
-              <MuiLink
-                variant="body2"
-                component={Link}
-                underline="none"
-                to="/register"
-                fontWeight="bold"
-              >
-                {translate("pages.login.signin", "Sign in")}
-              </MuiLink>
+            <Box display="flex" justifyContent="flex-end" className="mt-2 mb-5">
+              <Link to="/" className="flex text-xs no-underline text-blue-600 font-thin">Sign In account?</Link>
             </Box>
           )}
           <Button
             type="submit"
             fullWidth
             variant="contained"
+            color="error"
             sx={{
-              mt: "8px",
+              my: "8px",
+              p:"8px",
+              backgroundColor: "#DC2434"
             }}
             disabled={isLoading}
           >
@@ -131,7 +128,7 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordProps> = ({
             )}
           </Button>
         </Box>
-      </CardContent>
+      </div>
     </Card>
   );
 
@@ -140,14 +137,19 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordProps> = ({
       <Box component="div" style={layoutStyles} {...(wrapperProps ?? {})}>
         <Container
           component="main"
-          maxWidth="xs"
+          maxWidth="sm"
           sx={{
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
             height: "100vh",
+            backgroundColor: "transparent",
+            gap: "2.5rem",
           }}
         >
+          <div className="flex justify-center">
+            <img className="w-11/12" src="mhanbae.png" alt="mhanbae" />
+          </div>
           {renderContent ? renderContent(Content) : Content}
         </Container>
       </Box>

@@ -21,6 +21,11 @@ import { notificationProvider } from "providers/notificationProvider";
 import { ToastContainer } from "react-toastify";
 import authProvider from "authProvider";
 import { HomeShow } from "pages/homes/";
+import { AppointmentList } from "pages/appointments";
+import { HiringCreate } from "pages/hirings";
+import { AccountShow } from "pages/accounts";
+import { HouseKeeperList } from "pages/housekeepers";
+import { RegisterList } from "pages/registers";
 
 function App() {
   return (
@@ -70,22 +75,36 @@ function App() {
                 options: {
                   label: "Hiring"
                 },
-                list: HomeShow,
+                list: HiringCreate,
               },
               {
                 name: "appointments",
                 options: {
                   label: "My Appointment"
                 },
-                list: HomeShow,
+                list: AppointmentList,
               },
               {
                 name: "accounts",
                 options: {
                   label: "My Account"
                 },
-                list: HomeShow,
-              }
+                list: AccountShow,
+              },
+              {
+                name: "housekeepers",
+                options: {
+                  label: "Housekeeper List"
+                },
+                list: HouseKeeperList,
+              },
+              {
+                name: "registers",
+                options: {
+                  label: "Housekeeper Register"
+                },
+                list: RegisterList,
+              },
             ]}
           >
             <ToastContainer />
