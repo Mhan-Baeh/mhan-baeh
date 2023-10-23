@@ -4,6 +4,8 @@ const auth = require("../middleware/auth")
 
 const router = express.Router()
 
-// router.get("/", adminCtrl.get)
-// router.get("/protected", auth.protected(process.env.ADMIN_SECRET),  adminCtrl.get)
+router.get("/health", adminCtrl.get)
+router.post("/admin", adminCtrl.post)
+router.post("/admin/login", adminCtrl.post)
+
 module.exports = router

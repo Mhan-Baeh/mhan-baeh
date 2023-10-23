@@ -4,6 +4,10 @@ const auth = require("../middleware/auth")
 
 const router = express.Router()
 
-// router.get("/", housekeeperCtrl.get)
-// router.get("/protected", auth.protected(process.env.HOUSEKEEPER_SECRET),  housekeeperCtrl.get)
+router.get("/health", housekeeperCtrl.get)
+router.post("/housekeeper", housekeeperCtrl.post)
+router.post("/housekeeper/login", housekeeperCtrl.post)
+router.get("/housekeeper", housekeeperCtrl.get)
+router.get("/housekeeper/:housekeeperId", housekeeperCtrl.get)
+
 module.exports = router
