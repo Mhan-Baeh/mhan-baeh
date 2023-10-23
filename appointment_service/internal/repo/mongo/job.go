@@ -3,7 +3,9 @@ package mongo
 import (
 	MongoModel "appointment_service/internal/models/mongo"
 	"context"
+
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -25,6 +27,28 @@ func (r *JobRepo) CreateJob(ctx context.Context, job *MongoModel.Job) error {
 func (r *JobRepo) GetAllJob(ctx context.Context) ([]*MongoModel.Job, error) {
 	var jobs []*MongoModel.Job
 	cursor, err := r.collection.Find(ctx, bson.M{})
+	if err != nil {
+		return nil, err
+	}
+	err = cursor.All(ctx, &jobs)
+	if err != nil {
+		return nil, err
+	}
+
+	return jobs, nil
+}
+
+func (r *JobRepo) GetJobByIds(ctx context.Context, ids []string) ([]*MongoModel.Job, error) {
+	var jobs []*MongoModel.Job
+	objectIDs := []primitive.ObjectID{}
+	for _, id := range ids {
+		objID, err := primitive.ObjectIDFromHex(id)
+		if err != nil {
+			return nil, err
+		}
+		objectIDs = append(objectIDs, objID)
+	}
+	cursor, err := r.collection.Find(ctx, bson.M{"_id": bson.M{"$in": objectIDs}})
 	if err != nil {
 		return nil, err
 	}

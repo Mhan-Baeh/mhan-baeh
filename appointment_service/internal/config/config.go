@@ -18,6 +18,7 @@ type Config struct {
 	PostgresDSN   string `env:"POSTGRES_DSN" envDefault:"postgres://user:password@localhost:5432/appointment_service?sslmode=disable"`
 	MongoDSN	  string `env:"MONGO_DSN" envDefault:"mongodb://user:password@localhost:27016"`
 	MongoDBName   string `env:"MONGO_DB_NAME" envDefault:"appointment_service"`
+	KafkaBroker   string `env:"KAFKA_BROKER" envDefault:"localhost:9092"`
 }
 
 func NewConfig() Config {

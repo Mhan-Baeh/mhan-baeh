@@ -1,22 +1,25 @@
 package server
 
 import (
+	"appointment_service/internal/config"
 	"appointment_service/internal/handlers/http"
-	"github.com/gin-gonic/gin"
+	"appointment_service/internal/infra/kafka"
 	"fmt"
+
+	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 )
 
 type HTTPServer struct {
 	handler *http.Handler
-	port   string
+	port    string
 }
 
 func NewHTTPServer(handler *http.Handler, port string) *HTTPServer {
 	return &HTTPServer{handler: handler, port: port}
 }
 
-func (s *HTTPServer) Run() {
+func (s *HTTPServer) Run(cfg *config.Config) {
 	defaultRouter := gin.Default()
 	// Define routes here
 	router := defaultRouter.Group("/http")
@@ -34,10 +37,15 @@ func (s *HTTPServer) Run() {
 	// postgres
 	router.GET("/appointments", s.handler.AppointmentHandler.GetAllAppointment)
 	router.POST("/appointments", s.handler.AppointmentHandler.CreateAppointment)
+	router.PATCH("/appointments/:id/status", s.handler.AppointmentHandler.UpdateAppointmentStatus)
+
+	// kafka
+	producer := kafka.NewProducer(cfg)
+	router.POST("/appointments/kafka", producer.PushAppointment)
 
 	address := fmt.Sprintf(":%s", s.port)
-    log.Printf("Starting HTTP server on %s", address) 
-	err := defaultRouter.Run(address)   // Default port is :8004
+	log.Printf("Starting HTTP server on %s", address)
+	err := defaultRouter.Run(address) // Default port is :8004
 	if err != nil {
 		log.Fatalf("failed to start http server: %v", err)
 	}
