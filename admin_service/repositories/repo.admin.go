@@ -1,8 +1,9 @@
 package repository
 
 import (
-	"github.com/jinzhu/gorm"
 	model "admin_service/models"
+
+	"github.com/jinzhu/gorm"
 )
 
 type AdminRepository interface {
@@ -10,7 +11,7 @@ type AdminRepository interface {
 	GetAdminByEmail(email string) (admin *model.Admin, err error)
 }
 
-type adminRepository struct{
+type adminRepository struct {
 	db *gorm.DB
 }
 
