@@ -1,12 +1,51 @@
 package controllers
 
 import (
+	"context"
 	"grpcServer/models"
+	"log"
+	"net"
 	"net/http"
+
+	"grpcServer/pb"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
+
+type CustomerServiceServer struct {
+	pb.UnimplementedCustomerServiceServer
+}
+
+func RegisterCustomerService(s *grpc.Server, l *net.Listener) {
+	pb.RegisterCustomerServiceServer(s, &CustomerServiceServer{})
+	if err := s.Serve(*l); err != nil {
+		log.Fatalf("failed to serve: %v", err)
+	}
+}
+
+func (s CustomerServiceServer) GetCustomer(ctx context.Context, request *pb.GetCustomerRequest) (*pb.Customer, error) {
+	id, err := uuid.Parse(request.CustomerId)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "Invalid ID format")
+	}
+
+	var customer models.Customer
+	if err := DB.Where("customer_id = ?", id).First(&customer).Error; err != nil {
+		return nil, status.Error(codes.NotFound, "Customer not found")
+	}
+
+	return &pb.Customer{
+		CustomerId: customer.CustomerID.String(),
+		Name:       customer.Name,
+		Phone:      customer.Phone,
+		Email:      customer.Email,
+	}, nil
+
+}
 
 // GET
 func (db *DBController) GetCustomers(c *gin.Context) {

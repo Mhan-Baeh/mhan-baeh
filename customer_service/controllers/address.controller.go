@@ -1,12 +1,52 @@
 package controllers
 
 import (
+	"context"
 	"grpcServer/models"
+	"grpcServer/pb"
+	"log"
+	"net"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
+
+type AddressServiceServer struct {
+	pb.UnimplementedAddressServiceServer
+}
+
+func RegisterAddressService(s *grpc.Server, l *net.Listener) {
+	pb.RegisterAddressServiceServer(s, &AddressServiceServer{})
+	if err := s.Serve(*l); err != nil {
+		log.Fatalf("failed to serve: %v", err)
+	}
+}
+
+func (s AddressServiceServer) GetCustomer(ctx context.Context, request *pb.GetAddressRequest) (*pb.Address, error) {
+	id, err := uuid.Parse(request.AddressId)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "Invalid ID format")
+	}
+
+	var address models.Address
+	if err := DB.Where("address_id = ?", id).First(&address).Error; err != nil {
+		return nil, status.Error(codes.NotFound, "Address not found")
+	}
+
+	return &pb.Address{
+		AddressId:  address.AddressID.String(),
+		CustomerId: address.CustomerID.String(),
+		Name:       address.Name,
+		Address:    address.Address,
+		Note:       address.Note,
+		HouseSize:  strconv.Itoa(address.HouseSize),
+	}, nil
+}
 
 // GET all addresses for a customer
 func (db *DBController) GetAddressesForCustomer(c *gin.Context) {

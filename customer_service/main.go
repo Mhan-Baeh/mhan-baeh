@@ -2,20 +2,25 @@ package main
 
 import (
 	"fmt"
+	"grpcServer/models"
+	"grpcServer/routers"
 	"log"
+	"net"
 	"net/http"
 	"os"
 
-	"grpcServer/models"
-	"grpcServer/routers"
+	"grpcServer/controllers"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 func main() {
+
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -43,10 +48,20 @@ func main() {
 
 	routers.SetCustomerRoutes(api, db)
 	routers.SetAddressRoutes(api, db)
+	controllers.DB = db
 
 	PORT := os.Getenv("SERVER_PORT")
 
 	port := fmt.Sprintf(":%v", PORT)
 	fmt.Println("Server Running on Port", port)
 	http.ListenAndServe(port, router)
+
+	listener, err := net.Listen("tcp", ":18081")
+	if err != nil {
+		panic(err)
+	}
+
+	s := grpc.NewServer()
+	reflection.Register(s)
+	controllers.RegisterCustomerService(s, &listener)
 }
