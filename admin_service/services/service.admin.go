@@ -1,43 +1,44 @@
 package service
 
 import (
-	"github.com/google/uuid"
-	"golang.org/x/crypto/bcrypt"
-	time "time"
-	s "strconv"
-	os "os"	
 	model "admin_service/models"
 	repository "admin_service/repositories"
 	request "admin_service/schemas/requests"
-	jwt "github.com/dgrijalva/jwt-go"
 	response "admin_service/schemas/responses"
+	os "os"
+	s "strconv"
+	time "time"
+
+	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type AdminService interface {
 	CreateAdmin(req *request.CreateAdminRequest) (err error)
-	LoginAdmin(req *request.LoginAdminRequest) (loginResponse *response.LoginAdminResponse, err error)
+	LoginAdmin(req *request.LoginAdminRequest) (loginResponse *response.LoginAdminData, err error)
 }
 
 type adminService struct {
-    adminRepository repository.AdminRepository
+	adminRepository repository.AdminRepository
 }
 
 func NewAdminService(adminRepository repository.AdminRepository) AdminService {
-    return &adminService{
-        adminRepository: adminRepository,
-    }
+	return &adminService{
+		adminRepository: adminRepository,
+	}
 }
 
 func HashPassword(password string) (string, error) {
-    hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-    if err != nil {
-        return "", err
-    }
-    return string(hashedPassword), nil
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+	return string(hashedPassword), nil
 }
 
 func ComparePassword(hashedPassword, userInput string) error {
-    return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(userInput))
+	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(userInput))
 }
 
 func GenerateLoginToken(customClaims map[string]interface{}, isExpire bool) (string, error) {
@@ -72,9 +73,9 @@ func (adminService *adminService) CreateAdmin(req *request.CreateAdminRequest) (
 	return nil
 }
 
-func (adminService *adminService) LoginAdmin(req *request.LoginAdminRequest) (loginResponse *response.LoginAdminResponse, err error) {
+func (adminService *adminService) LoginAdmin(req *request.LoginAdminRequest) (loginResponse *response.LoginAdminData, err error) {
 	admin, err := adminService.adminRepository.GetAdminByEmail(req.Email)
-	if err != nil || admin == nil{
+	if err != nil || admin == nil {
 		return nil, err
 	}
 
@@ -85,6 +86,7 @@ func (adminService *adminService) LoginAdmin(req *request.LoginAdminRequest) (lo
 	}
 
 	claims := map[string]interface{}{}
+	claims["admin_uuid"] = admin.Admin_uuid.String()
 	claims["email"] = admin.Email
 	claims["role"] = "admin"
 	token, err := GenerateLoginToken(claims, true)
@@ -92,7 +94,7 @@ func (adminService *adminService) LoginAdmin(req *request.LoginAdminRequest) (lo
 		return nil, err
 	}
 
-	var res response.LoginAdminResponse
+	var res response.LoginAdminData
 	res.Admin_uuid = admin.Admin_uuid.String()
 	res.Email = admin.Email
 	res.Name = admin.Name
