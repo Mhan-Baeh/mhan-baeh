@@ -1,0 +1,26 @@
+syntax = "proto3";
+option go_package = "/pb";
+
+message Housekeeper {
+    string housekeeper_uuid = 1;
+    string name = 2;
+    string email = 3;
+    string password = 4;
+    string phone = 5;
+}
+
+service HousekeeperService {
+    rpc GetHousekeeperByUuid (GetHousekeeperRequest) returns (Housekeeper);
+    rpc GetAllHousekeepers (Empty) returns (HousekeeperList);
+}
+
+message Empty {}
+
+message GetHousekeeperRequest {
+    string housekeeper_uuid = 1;
+}
+
+message HousekeeperList{
+    repeated Housekeeper housekeepers = 1;
+}
+
