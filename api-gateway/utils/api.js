@@ -37,7 +37,7 @@ const errorResponse = (error) => {
 const get = async (req, res, baseUrl, prefix, headers = {}) => {
     try {
         const response = await axios.get(formatUrl({ requestUrl: req.url, baseUrl, prefix }), {
-            headers: { authorization: req.headers.authorization, ...headers },
+            headers: { authorization: req.headers.authorization, claims: JSON.stringify(req.user), ...headers },
         })
 
         setResponse(res, response)
@@ -52,7 +52,7 @@ const post = async (req, res, baseUrl, prefix, headers = {},) => {
         const response = await axios.post(
             formatUrl({ requestUrl: req.url, baseUrl, prefix }),
             req.body,
-            { headers: { authorization: req.headers.authorization, ...headers } },
+            { headers: { authorization: req.headers.authorization, claims: JSON.stringify(req.user), ...headers }, },
         )
 
         setResponse(res, response)
@@ -67,7 +67,7 @@ const put = async (req, res, baseUrl, prefix, headers = {}) => {
         const response = await axios.put(
             formatUrl({ requestUrl: req.url, baseUrl, prefix }),
             req.body,
-            { headers: { authorization: req.headers.authorization, ...headers } },
+            { headers: { authorization: req.headers.authorization, claims: JSON.stringify(req.user), ...headers }, },
         )
 
         setResponse(res, response)
@@ -81,7 +81,7 @@ const del = async (req, res, baseUrl, prefix, headers = {}) => {
     try {
         const response = await axios.delete(
             formatUrl({ requestUrl: req.url, baseUrl, prefix }),
-            { headers: { authorization: req.headers.authorization, ...headers }, data: req.body },
+            { headers: { authorization: req.headers.authorization, claims: JSON.stringify(req.user), ...headers }, data: req.body },
         )
 
         setResponse(res, response)
@@ -96,7 +96,7 @@ const patch = async (req, res, baseUrl, prefix, headers) => {
         const response = await axios.patch(
             formatUrl({ requestUrl: req.url, baseUrl, prefix }),
             req.body,
-            { headers: { authorization: req.headers.authorization, ...headers } },
+            { headers: { authorization: req.headers.authorization, claims: JSON.stringify(req.user), ...headers }, },
         )
 
         setResponse(res, response)
