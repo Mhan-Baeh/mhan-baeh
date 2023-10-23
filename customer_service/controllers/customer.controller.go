@@ -3,15 +3,13 @@ package controllers
 import (
 	"context"
 	"grpcServer/models"
-	"log"
-	"net"
+
 	"net/http"
 
 	"grpcServer/pb"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -20,12 +18,6 @@ type CustomerServiceServer struct {
 	pb.UnimplementedCustomerServiceServer
 }
 
-func RegisterCustomerService(s *grpc.Server, l *net.Listener) {
-	pb.RegisterCustomerServiceServer(s, &CustomerServiceServer{})
-	if err := s.Serve(*l); err != nil {
-		log.Fatalf("failed to serve: %v", err)
-	}
-}
 
 func (s CustomerServiceServer) GetCustomer(ctx context.Context, request *pb.GetCustomerRequest) (*pb.Customer, error) {
 	id, err := uuid.Parse(request.CustomerId)
