@@ -4,10 +4,7 @@ WORKDIR /go/src/app
 
 COPY . .
 
-RUN go get -d -v ./...
-RUN go install -v ./...
-RUN go build server.go
-
+RUN go build -o server server.go
 EXPOSE 8080
 
 CMD ["./server"]
