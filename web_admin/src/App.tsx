@@ -4,7 +4,7 @@ import {
   GlobalStyles,
   ThemeProvider,
   ReadyPage,
-  ErrorComponent
+  ErrorComponent,
 } from "@pankod/refine-mui";
 import { AuthPage } from "components/pages/auth";
 import routerProvider from "@pankod/refine-react-router-v6";
@@ -32,17 +32,17 @@ function App() {
 
         <RefineSnackbarProvider>
           <Refine
-            LoginPage={AuthPage}
-            authProvider={authProvider}
+            // LoginPage={AuthPage}
+            // authProvider={authProvider}
             dataProvider={dataProvider(`${REST_PUBLIC_URI}`)}
             routerProvider={{
               ...routerProvider,
               routes: [
                 {
                   path: "/login",
-                  element: <AuthPage type="login"/>
-                } 
-              ]
+                  element: <AuthPage type="login" />,
+                },
+              ],
             }}
             notificationProvider={notificationProvider}
             Layout={Layout}
@@ -52,14 +52,14 @@ function App() {
               {
                 name: "housekeepers",
                 options: {
-                  label: "Housekeeper List"
+                  label: "Housekeeper List",
                 },
                 list: HouseKeeperList,
               },
               {
                 name: "registers",
                 options: {
-                  label: "Housekeeper Register"
+                  label: "Housekeeper Register",
                 },
                 list: RegisterList,
               },
