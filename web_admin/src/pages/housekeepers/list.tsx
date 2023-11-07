@@ -12,17 +12,31 @@ import {
 import {Link} from "react-router-dom";
 
 export const HouseKeeperList = () => {
-  const { dataGridProps } = useDataGrid({ queryOptions: { retry: false } });
+  const { dataGridProps } = useDataGrid({
+    queryOptions: { retry: false },
+    hasPagination: false });
 
   const columns = React.useMemo<GridColumns<any>>(
     () => [
+      {
+        field: "housekeeper_uuid",
+        headerName: "Housekeeper Uuid",
+        type: "number",
+        align: "center",
+        headerAlign: "center",
+        minWidth: 250,
+        sortable: false,
+        filterable: false,
+      },
       {
         field: "name",
         headerName: "Housekeeper name",
         type: "number",
         align: "center",
         headerAlign: "center",
-        minWidth: 200,
+        minWidth: 250,
+        sortable: false,
+        filterable: false,
       },
       {
         field: "phone",
@@ -30,7 +44,9 @@ export const HouseKeeperList = () => {
         type: "string",
         align: "center",
         headerAlign: "center",
-        minWidth: 150,
+        minWidth: 180,
+        sortable: false,
+        filterable: false,
       },
       {
         field: "email",
@@ -38,7 +54,9 @@ export const HouseKeeperList = () => {
         type: "number",
         align: "center",
         headerAlign: "center",
-        minWidth: 100,
+        minWidth: 200,
+        sortable: false,
+        filterable: false,
       },
       {
         field: "password",
@@ -46,7 +64,9 @@ export const HouseKeeperList = () => {
         type: "number",
         align: "center",
         headerAlign: "center",
-        minWidth: 100,
+        minWidth: 180,
+        sortable: false,
+        filterable: false,
       },
       {
         field: "actions",
@@ -60,7 +80,7 @@ export const HouseKeeperList = () => {
         },
         align: "center",
         headerAlign: "center",
-        minWidth: 100,
+        minWidth: 150,
         sortable: false,
         filterable: false,
       },
@@ -69,13 +89,7 @@ export const HouseKeeperList = () => {
   );
   return (
     <div className="p-5">
-      <List title={
-        <div className="flex justify-between items-center">
-          <Typography variant="h5">Appointments</Typography>
-          <Link className="flex no-underline p-2 shadow-md rounded-md text-sm text-white bg-blue-700" to="/registers">Register Housekeeper</Link>
-        </div>
-      }
-      >
+      <List>
         <DataGrid
           {...dataGridProps}
           getRowId={(row) => row.housekeeper_uuid}
