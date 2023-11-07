@@ -20,7 +20,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { notificationProvider } from "providers/notificationProvider";
 import { ToastContainer } from "react-toastify";
 import authProvider from "authProvider";
-import { AppointmentList } from "pages/appointments";
+import { HouseKeeperList } from "pages/housekeepers";
+import { RegisterList } from "pages/registers";
 
 function App() {
   return (
@@ -49,11 +50,18 @@ function App() {
             catchAll={<ErrorComponent />}
             resources={[
               {
-                name: "appointments",
+                name: "housekeepers",
                 options: {
-                  label: "My Appointment",
+                  label: "Housekeeper List",
                 },
-                list: AppointmentList,
+                list: HouseKeeperList,
+              },
+              {
+                name: "registers",
+                options: {
+                  label: "Housekeeper Register",
+                },
+                list: RegisterList,
               },
             ]}
           >

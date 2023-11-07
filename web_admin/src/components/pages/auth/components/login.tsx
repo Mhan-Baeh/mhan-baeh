@@ -98,7 +98,7 @@ export const LoginPage: React.FC<LoginProps> = ({
           style={titleStyles}
           color="black"
         >
-          {translate("pages.login.title", "HouseKeeper Login")}
+          {translate("pages.login.title", "Admin Login")}
         </Typography>
         <Box
           component="form"
@@ -111,7 +111,10 @@ export const LoginPage: React.FC<LoginProps> = ({
           })}
         >
           {renderProviders()}
-          <Typography color="black" className="p-0">
+          <Typography
+            color="black"
+            className="p-0"
+          >
             Email
           </Typography>
           <TextField
@@ -134,7 +137,10 @@ export const LoginPage: React.FC<LoginProps> = ({
             }}
             className="shadow-md"
           />
-          <Typography color="black" className="mt-3">
+          <Typography
+            color="black"
+            className="mt-3"
+          >
             Password
           </Typography>
           <TextField
@@ -166,8 +172,8 @@ export const LoginPage: React.FC<LoginProps> = ({
             sx={{
               mt: "13px",
               mb: "8px",
-              p: "8px",
-              backgroundColor: "#DC2434",
+              p:"8px",
+              backgroundColor: "#DC2434"
             }}
             disabled={isLoading}
           >

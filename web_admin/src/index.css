@@ -1,0 +1,22 @@
+@tailwind components;
+@tailwind utilities;
+
+
+@import "~react-image-gallery/styles/css/image-gallery.css";
+
+
+.image-gallery-slides {
+    min-height: 160px;
+}
+
+.image-gallery-left-nav .image-gallery-svg, .image-gallery-right-nav .image-gallery-svg {
+  height: 80px;
+  width: 80px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.image-gallery-content .image-gallery-slide .image-gallery-image {
+    max-height: calc(100vh - 800px);
+}
