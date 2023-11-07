@@ -15,7 +15,7 @@ router.post("/http/appointments", auth.protected, auth.authorized([{role: "custo
 router.patch("/http/appointments/:id", auth.protected, auth.authorized([{role: "all"}]), appointmentCtrl.patch) // all
 
 // no protect
-router.get("/health", appointmentCtrl.get)
+router.get("/http/health", appointmentCtrl.get)
 
 
 
