@@ -1,0 +1,26 @@
+FROM node:20.8-slim
+
+ARG REACT_APP_BACKEND_API
+
+ENV REACT_APP_BACKEND_API=$REACT_APP_BACKEND_API
+
+ADD . /home/web
+
+WORKDIR /home/web
+
+ENV TZ=Asia/Bangkok
+ENV PORT=3000
+
+RUN apt-get update && apt-get install -y curl
+
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ >/etc/timezone
+
+RUN npm install
+
+RUN npm run build
+
+RUN npm install -g serve
+
+EXPOSE 3000
+
+CMD serve -s build
