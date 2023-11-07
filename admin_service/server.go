@@ -1,15 +1,16 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
-	"log"
-	"os"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"fmt"
 	model "admin_service/models"
 	route "admin_service/routes"
+	"fmt"
+	"log"
+	"os"
+
+	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -27,16 +28,15 @@ func main() {
 
 	dbURI := "host=" + dbHost + " port=" + dbPort + " user=" + dbUser + " dbname=" + dbName + " sslmode=disable" + " password=" + dbPassword
 	fmt.Println(dbURI)
-    db, err := gorm.Open("postgres", dbURI)
-    if err != nil {
-        panic("Failed to connect to database")
-    }
+	db, err := gorm.Open("postgres", dbURI)
+	if err != nil {
+		fmt.Println(err)
+		panic("Failed to connect to database")
+	}
 
-    defer db.Close()
+	defer db.Close()
 
 	db.AutoMigrate(&model.Admin{})
-
-
 
 	r := gin.Default()
 
