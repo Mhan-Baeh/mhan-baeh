@@ -5,7 +5,7 @@ import { REST_PUBLIC_URI } from "environment";
 const authProvider: AuthProvider = {
   login: async ({ email, password }) => {
     const response = await axiosInstance.post(
-      `${REST_PUBLIC_URI}/api/login`,
+      `${REST_PUBLIC_URI}/api/admin/login`,
       {
         email,
         password,
@@ -18,23 +18,6 @@ const authProvider: AuthProvider = {
     }
 
     return Promise.reject("/");
-  },
-  register: async({email, name, phone, password, confirmPassword}) =>{
-    const response = await axiosInstance.post(
-      `${REST_PUBLIC_URI}/api/register`,
-      {
-        email,
-        name,
-        phone,
-        password,
-        confirmPassword
-      }
-    );
-    if (response.status === 200) {
-      return Promise.resolve("/");
-    }
-    return Promise.reject("/");
-    
   },
   checkAuth: () => {
     const user = localStorage.getItem("auth");

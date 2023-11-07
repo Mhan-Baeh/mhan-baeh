@@ -24,8 +24,6 @@ import { HomeShow } from "pages/homes/";
 import { AppointmentList } from "pages/appointments";
 import { HiringCreate } from "pages/hirings";
 import { AccountShow } from "pages/accounts";
-import { HouseKeeperList } from "pages/housekeepers";
-import { RegisterList } from "pages/registers";
 
 function App() {
   return (
@@ -90,20 +88,6 @@ function App() {
                   label: "My Account"
                 },
                 list: AccountShow,
-              },
-              {
-                name: "housekeepers",
-                options: {
-                  label: "Housekeeper List"
-                },
-                list: HouseKeeperList,
-              },
-              {
-                name: "registers",
-                options: {
-                  label: "Housekeeper Register"
-                },
-                list: RegisterList,
               },
             ]}
           >

@@ -82,10 +82,7 @@ const dataProvider = (
     if (resource.endsWith("s")) {
       resource = resource.slice(0, -1);
     }
-    const { data } = await httpClient.put(url, {
-      ...variables,
-      [`${resource}_uuid`]: id,
-    });
+    const { data } = await httpClient.put(url, { ...variables, [`${resource}_uuid`]:id });
 
     return {
       data,
@@ -97,7 +94,7 @@ const dataProvider = (
 
     const { data } = await httpClient.get(url);
 
-    if (!!data?.status_code && !!data?.data) {
+    if (!!data?.status_code &&!!data?.data) {
       return {
         data: data?.data,
       };

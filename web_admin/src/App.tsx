@@ -4,7 +4,7 @@ import {
   GlobalStyles,
   ThemeProvider,
   ReadyPage,
-  ErrorComponent,
+  ErrorComponent
 } from "@pankod/refine-mui";
 import { AuthPage } from "components/pages/auth";
 import routerProvider from "@pankod/refine-react-router-v6";
@@ -20,7 +20,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { notificationProvider } from "providers/notificationProvider";
 import { ToastContainer } from "react-toastify";
 import authProvider from "authProvider";
-import { AppointmentList } from "pages/appointments";
+import { HouseKeeperList } from "pages/housekeepers";
+import { RegisterList } from "pages/registers";
 
 function App() {
   return (
@@ -31,17 +32,17 @@ function App() {
 
         <RefineSnackbarProvider>
           <Refine
-            // LoginPage={AuthPage}
-            // authProvider={authProvider}
+            LoginPage={AuthPage}
+            authProvider={authProvider}
             dataProvider={dataProvider(`${REST_PUBLIC_URI}`)}
             routerProvider={{
               ...routerProvider,
               routes: [
                 {
                   path: "/login",
-                  element: <AuthPage type="login" />,
-                },
-              ],
+                  element: <AuthPage type="login"/>
+                } 
+              ]
             }}
             notificationProvider={notificationProvider}
             Layout={Layout}
@@ -49,11 +50,18 @@ function App() {
             catchAll={<ErrorComponent />}
             resources={[
               {
-                name: "appointments",
+                name: "housekeepers",
                 options: {
-                  label: "My Appointment",
+                  label: "Housekeeper List"
                 },
-                list: AppointmentList,
+                list: HouseKeeperList,
+              },
+              {
+                name: "registers",
+                options: {
+                  label: "Housekeeper Register"
+                },
+                list: RegisterList,
               },
             ]}
           >
