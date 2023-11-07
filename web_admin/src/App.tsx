@@ -22,10 +22,7 @@ import { ToastContainer } from "react-toastify";
 import authProvider from "authProvider";
 import { HomeShow } from "pages/homes/";
 import { AppointmentList } from "pages/appointments";
-import { HiringCreate } from "pages/hirings";
-import { AccountShow } from "pages/accounts";
-import { HouseKeeperList } from "pages/housekeepers";
-import { RegisterList } from "pages/registers";
+import { HouseKeeperList, HouseKeeperCreate } from "pages/housekeepers";
 
 function App() {
   return (
@@ -44,9 +41,9 @@ function App() {
               routes: [
                 {
                   path: "/login",
-                  element: <AuthPage type="login"/>
-                }
-              ]
+                  element: <AuthPage type="login" />,
+                },
+              ],
             }}
             notificationProvider={notificationProvider}
             Layout={Layout}
@@ -56,24 +53,19 @@ function App() {
               {
                 name: "appointments",
                 options: {
-                  label: "Appointment List"
+                  label: "Appointment",
                 },
                 list: AppointmentList,
               },
               {
                 name: "housekeepers",
                 options: {
-                  label: "Housekeeper List"
+                  label: "Housekeeper",
                 },
                 list: HouseKeeperList,
+                create: HouseKeeperCreate,
               },
-              {
-                name: "registers",
-                options: {
-                  label: "Housekeeper Register"
-                },
-                list: RegisterList,
-              },
+            
             ]}
           >
             <ToastContainer />
