@@ -4,8 +4,9 @@ const auth = require("../middleware/auth")
 
 const router = express.Router()
 
-router.get("/health", adminCtrl.get)
-router.post("/admin", adminCtrl.post)
-router.post("/admin/login", adminCtrl.post)
+// no protected
+router.get("/health", adminCtrl.get) // all (should be internal)
+router.post("/admin", adminCtrl.post) // no one *need backdoor
+router.post("/admin/login", adminCtrl.post) // no auth
 
 module.exports = router
