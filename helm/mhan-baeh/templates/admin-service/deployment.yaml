@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-deployment
+  labels:
+    app: admin-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admin-pod
+  template:
+    metadata:
+      labels:
+        app: admin-pod
+    spec:
+      containers:
+        - name: admin
+          image: champkub6/admin-service
+          ports:
+            - containerPort: 8000
+          env:
+            - name: SV_PORT
+              value: "8000"
+            - name: DB_HOST
+              value: admin_postgres
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USER
+              value: user
+            - name: DB_PASSWORD
+              value: password
+            - name: DB_NAME
+              value: admin_db
+            - name: JWT_SECRET
+              value: ADMIN_SERVICE_SECRET_KEY
+            
+
+
+
+
+

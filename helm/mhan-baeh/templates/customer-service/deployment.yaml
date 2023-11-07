@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customer-deployment
+  labels:
+    app: customer-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: customer-pod
+  template:
+    metadata:
+      labels:
+        app: customer-pod
+    spec:
+      containers:
+        - name: customer
+          image: champkub6/customer-service
+          ports:
+            - containerPort: 8082
+          env:
+            - name: DATABASE_HOST
+              value: customer_postgres
+            - name: DATABASE_USERNAME
+              value: user
+            - name: DATABASE_PASSWORD
+              value: password
+            - name: DATABASE_PORT
+              value: "5432"
+            - name: DATABASE_NAME
+              value: customer_db
+            - name: DATABASE_URL
+              value: postgresql://user:password@customer_postgres:5432/customer_db?sslmode=disable
+            - name: SERVER_PORT
+              value: "8082"
+            - name: JWT_SECRET
+              value: CUSTOMER_SERVICE_SECRET_KEY
+
+
+
+
