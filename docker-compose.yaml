@@ -159,7 +159,7 @@ services:
       DB_PASSWORD: password
       DB_SSLMODE: disable
       POSTGRES_DSN: postgres://user:password@app_postgres:5432/appointment_db?sslmode=disable
-      MONGO_DSN: mongodb://user:password@app_mongodb:27016
+      MONGO_DSN: mongodb://user:password@app_mongodb:27017
       MONGO_DB_NAME: appointment_service
       KAFKA_BROKER: app_kafka:9092
       CUSTOMER_SERVICE_GRPC_HOST: customer_service:18081
