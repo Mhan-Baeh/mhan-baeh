@@ -41,11 +41,11 @@ spec:
             - name: MONGO_DB_NAME
               value: appointment_service
             - name: KAFKA_BROKER
-              value: app_kafka:9092
+              value: kafka-service:9092
             - name: CUSTOMER_SERVICE_GRPC_HOST
-              value: customer_service:18081
+              value: customer-service:18081
             - name: HOUSEKEEPER_SERVICE_GRPC_HOST
-              value: housekeeper_service:18082
+              value: housekeeper-service:18082
 
 
 

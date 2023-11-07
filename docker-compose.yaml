@@ -1,10 +1,10 @@
-version: '3.9'
+version: "3.9"
 
 services:
   # admin-service ------------------------------------
   admin_postgres:
     image: postgres:13
-    restart: always 
+    restart: always
     volumes:
       - database-storage-admin:/var/lib/postgresql/data
     environment:
@@ -14,6 +14,7 @@ services:
     ports:
       - 5432:5432
   admin_service:
+    image: champkub6/admin-service
     build:
       context: ./admin_service
     depends_on:
@@ -31,7 +32,7 @@ services:
   # customer-service ------------------------------------
   customer_postgres:
     image: postgres:13
-    restart: always 
+    restart: always
     volumes:
       - database-storage-customer:/var/lib/postgresql/data
     environment:
@@ -41,7 +42,8 @@ services:
     ports:
       - 5431:5432
   customer_service:
-    build: 
+    image: champkub6/customer-service
+    build:
       context: ./customer_service
     depends_on:
       - customer_postgres
@@ -59,7 +61,7 @@ services:
   # housekeeper-service ------------------------------------
   housekeeper_postgres:
     image: postgres:13
-    restart: always 
+    restart: always
     volumes:
       - database-storage-housekeeper:/var/lib/postgresql/data
     environment:
@@ -69,7 +71,8 @@ services:
     ports:
       - 5434:5432
   housekeeper_service:
-    build: 
+    image: champkub6/housekeeper-service
+    build:
       context: ./housekeeper_service
     depends_on:
       - housekeeper_postgres
@@ -107,8 +110,8 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false' # Disable auto-creating topics
-    command: 
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false" # Disable auto-creating topics
+    command:
       - /bin/sh
       - -c
       - |
@@ -141,9 +144,10 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: appointment_db
-  
+
   appointment_service:
-    build: 
+    image: champkub6/appointment-service
+    build:
       context: ./appointment_service
     depends_on:
       - zookeeper

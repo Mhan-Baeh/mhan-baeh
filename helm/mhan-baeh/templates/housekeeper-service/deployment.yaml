@@ -19,6 +19,7 @@ spec:
           image: champkub6/housekeeper-service
           ports:
             - containerPort: 8083
+            - containerPort: 18082
           env:
             - name: SV_PORT
               value: "8083"

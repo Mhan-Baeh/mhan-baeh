@@ -19,6 +19,7 @@ spec:
           image: champkub6/customer-service
           ports:
             - containerPort: 8082
+            - containerPort: 18081
           env:
             - name: DATABASE_HOST
               value: customer_postgres
