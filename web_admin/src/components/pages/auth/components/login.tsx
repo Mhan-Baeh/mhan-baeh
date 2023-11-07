@@ -98,7 +98,7 @@ export const LoginPage: React.FC<LoginProps> = ({
           style={titleStyles}
           color="black"
         >
-          {translate("pages.login.title", "Admin Login")}
+          {translate("pages.login.title", "Login")}
         </Typography>
         <Box
           component="form"
@@ -164,14 +164,23 @@ export const LoginPage: React.FC<LoginProps> = ({
             }}
             className="shadow-md"
           />
+          <Box
+            component="div"
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          ></Box>
+          <div className="flex justify-between mt-3 mb-5">
+          </div>
           <Button
             type="submit"
             fullWidth
             variant="contained"
             color="error"
             sx={{
-              mt: "13px",
-              mb: "8px",
+              my: "8px",
               p:"8px",
               backgroundColor: "#DC2434"
             }}

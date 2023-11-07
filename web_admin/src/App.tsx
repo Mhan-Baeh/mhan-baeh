@@ -4,7 +4,7 @@ import {
   GlobalStyles,
   ThemeProvider,
   ReadyPage,
-  ErrorComponent,
+  ErrorComponent
 } from "@pankod/refine-mui";
 import { AuthPage } from "components/pages/auth";
 import routerProvider from "@pankod/refine-react-router-v6";
@@ -20,6 +20,10 @@ import "react-toastify/dist/ReactToastify.css";
 import { notificationProvider } from "providers/notificationProvider";
 import { ToastContainer } from "react-toastify";
 import authProvider from "authProvider";
+import { HomeShow } from "pages/homes/";
+import { AppointmentList } from "pages/appointments";
+import { HiringCreate } from "pages/hirings";
+import { AccountShow } from "pages/accounts";
 import { HouseKeeperList } from "pages/housekeepers";
 import { RegisterList } from "pages/registers";
 
@@ -40,9 +44,9 @@ function App() {
               routes: [
                 {
                   path: "/login",
-                  element: <AuthPage type="login" />,
-                },
-              ],
+                  element: <AuthPage type="login"/>
+                }
+              ]
             }}
             notificationProvider={notificationProvider}
             Layout={Layout}
@@ -50,16 +54,23 @@ function App() {
             catchAll={<ErrorComponent />}
             resources={[
               {
+                name: "appointments",
+                options: {
+                  label: "Appointment List"
+                },
+                list: AppointmentList,
+              },
+              {
                 name: "housekeepers",
                 options: {
-                  label: "Housekeeper List",
+                  label: "Housekeeper List"
                 },
                 list: HouseKeeperList,
               },
               {
                 name: "registers",
                 options: {
-                  label: "Housekeeper Register",
+                  label: "Housekeeper Register"
                 },
                 list: RegisterList,
               },
