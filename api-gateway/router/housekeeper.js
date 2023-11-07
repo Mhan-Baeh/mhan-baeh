@@ -3,11 +3,13 @@ const housekeeperCtrl = require('../controller/housekeeper')
 const auth = require("../middleware/auth")
 
 const router = express.Router()
-
+// no protected
 router.get("/health", housekeeperCtrl.get)
-router.post("/housekeeper", housekeeperCtrl.post)
-router.post("/housekeeper/login", housekeeperCtrl.post)
-router.get("/housekeeper", housekeeperCtrl.get)
-router.get("/housekeeper/:housekeeperId", housekeeperCtrl.get)
+
+
+router.post("/housekeeper", auth.protected, auth.authorized([{role: "admin"}]), housekeeperCtrl.post) // admin
+router.post("/housekeeper/login", housekeeperCtrl.post) // no protect
+router.get("/housekeepers", auth.protected, auth.authorized([{role: "admin"}]), housekeeperCtrl.get) // admin
+router.get("/housekeeper/:housekeeperId", auth.protected, auth.authorized([{role: "admin"}]), housekeeperCtrl.get) // admin
 
 module.exports = router
