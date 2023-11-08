@@ -7,9 +7,9 @@ const router = express.Router()
 router.get("/health", housekeeperCtrl.get)
 
 
-router.post("/housekeeper", auth.protected, auth.authorized([{role: "admin"}]), housekeeperCtrl.post) // admin
+router.post("/housekeeper", auth.protected(auth.admin), auth.authorized([{role: "admin"}]), housekeeperCtrl.post) // admin
 router.post("/housekeeper/login", housekeeperCtrl.post) // no protect
-router.get("/housekeepers", auth.protected, auth.authorized([{role: "admin"}]), housekeeperCtrl.get) // admin
-router.get("/housekeeper/:housekeeperId", auth.protected, auth.authorized([{role: "admin"}]), housekeeperCtrl.get) // admin
+router.get("/housekeepers", auth.protected(auth.admin), auth.authorized([{role: "admin"}]), housekeeperCtrl.get) // admin
+router.get("/housekeeper/:housekeeperId", auth.protected(auth.admin), auth.authorized([{role: "admin"}]), housekeeperCtrl.get) // admin
 
 module.exports = router
