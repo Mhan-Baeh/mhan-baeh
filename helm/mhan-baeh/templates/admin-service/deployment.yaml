@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: admin
-          image: champkub6/admin-service
+          image: champkub6/admin-service:v1.0.0
           ports:
             - containerPort: 8000
           env:
@@ -34,6 +34,8 @@ spec:
               value: admin_db
             - name: JWT_SECRET
               value: ADMIN_SERVICE_SECRET_KEY
+            - name: JWT_EXPIRES_MINUTES
+              value: "60"
             
 
 

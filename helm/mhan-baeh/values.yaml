@@ -1,5 +1,5 @@
-mongodb:
-  architecture: replicaset
-  auth:
-    enabled: true
-    rootPassword: password
+# mongodb:
+#   architecture: replicaset
+#   auth:
+#     enabled: true
+#     rootPassword: password

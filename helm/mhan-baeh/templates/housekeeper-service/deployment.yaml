@@ -16,13 +16,13 @@ spec:
     spec:
       containers:
         - name: housekeeper
-          image: champkub6/housekeeper-service
+          image: champkub6/housekeeper-service:v1.0.0
           ports:
-              containerPort: 8083
-              containerPort: 18082
+            - containerPort: 8003
+            - containerPort: 18082
           env:
             - name: SV_PORT
-              value: "8083"
+              value: "8003"
             - name: DB_HOST
               value: postgres-housekeeper-service
             - name: DB_PORT
@@ -35,7 +35,8 @@ spec:
               value: housekeeper_db
             - name: JWT_SECRET
               value: HOUSEKEEPER_SERVICE_SECRET_KEY
-
+            - name: JWT_EXPIRES_MINUTES
+              value: "60"
 
 
 

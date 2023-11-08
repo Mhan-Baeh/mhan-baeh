@@ -16,12 +16,12 @@ spec:
     spec:
       containers:
         - name: appointment
-          image: champkub6/appointment-service
+          image: champkub6/appointment-service:v1.1.0
           ports:
             - containerPort: 8001
           env:
             - name: HTTPPort
-              value: "8081"
+              value: "8001"
             - name: DB_HOST
               value: postgres-appointment-service
             - name: DB_PORT
@@ -35,9 +35,9 @@ spec:
             - name: DB_SSLMODE
               value: disable
             - name: POSTGRES_DSN
-              value: postgres://user:password@postgres-appointment-service:5432/appointment_db?sslmode=disable
+              value: postgres://user:password@postgres-appointment-service:5433/appointment_db?sslmode=disable
             - name: MONGO_DSN
-              value: mongodb://root:password@mhan-baeh-mongodb-headless:27017
+              value: mongodb+srv://user:1N3pWFXC1Ja5M4eN@cluster0.ksk2rr9.mongodb.net/?retryWrites=true&w=majority
             - name: MONGO_DB_NAME
               value: appointment_service
             - name: KAFKA_BROKER

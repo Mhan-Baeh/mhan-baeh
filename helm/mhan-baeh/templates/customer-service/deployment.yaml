@@ -16,9 +16,9 @@ spec:
     spec:
       containers:
         - name: customer
-          image: champkub6/customer-service
+          image: champkub6/customer-service:v1.0.0
           ports:
-            - containerPort: 8082
+            - containerPort: 8002
             - containerPort: 18081
           env:
             - name: DATABASE_HOST
@@ -34,9 +34,11 @@ spec:
             - name: DATABASE_URL
               value: postgresql://user:password@postgres-customer-service:5432/customer_db?sslmode=disable
             - name: SERVER_PORT
-              value: "8082"
+              value: "8002"
             - name: JWT_SECRET
               value: CUSTOMER_SERVICE_SECRET_KEY
+            - name: JWT_EXPIRES_MINUTES
+              value: "60"
 
 
 
