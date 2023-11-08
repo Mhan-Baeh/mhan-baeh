@@ -19,13 +19,13 @@ function getKey(service) {
       return makeStruct(service, process.env.ADMIN_SECRET)
     }
     case customer: {
-      return makeStruct(process.env.CUSTOMER_SECRET)
+      return makeStruct(service, process.env.CUSTOMER_SECRET)
     }
     case housekeeper: {
-      return makeStruct(process.env.HOUSEKEEPER_SECRET)
+      return makeStruct(service, process.env.HOUSEKEEPER_SECRET)
     }
     case appointment: {
-      return makeStruct(process.env.APPOINTMENT_SECRET)
+      return makeStruct(service, process.env.APPOINTMENT_SECRET)
     }
   }
 }
@@ -67,7 +67,7 @@ const protected = (...services) => {
 
     Promise.all(promises).then(() => {
       console.log(verificationResult);
-      if (!verificationResult.map(v => v.success).includes(true)) {
+      if (!verificationResult.some(v => v.success)) {
         console.log("Unauthenticated");
         return res.sendStatus(401);
       }
@@ -94,17 +94,17 @@ const authorized = (allows) => {
     //     else if (req.params && req.params[restrictedIdParam] == req.user.uuid) next()
     // }
     if (req.user?.role) {
-      if (allows.map((a) => a.role == "all").includes(true)) next();
+      if (allows.map((a) => a.role == "all").includes(true)) return next();
       const mapped = allows.map((a) => {
         if (a.role == req.user.role) {
           if (!a.idParam) return true;
-          if (req.params.idParam === req.user.uuid) {
+          if (req.params[a.idParam] === req.user.uuid) {
             return true;
           }
         }
         return false;
       });
-      if (mapped.includes(true)) next();
+      if (mapped.includes(true)) return next();
       return res.sendStatus(403);
     }
   };
