@@ -12,6 +12,7 @@ router.get("/http/jobs", auth.protected(...auth.allRoles), auth.authorized([{rol
 router.get("/http/appointments", auth.protected(...auth.allRoles), auth.authorized([{role: "all"}]), appointmentCtrl.get) // all
 router.post("/http/appointments", auth.protected(auth.customer), auth.authorized([{role: "customer"}]), appointmentCtrl.pushKafka) // customer
 // router.post("/http/appointments/kafka", appointmentCtrl.post) // TODO remove this
+router.get("/http/appointments/:id", auth.protected(...auth.allRoles), auth.authorized([{role: "all"}]), appointmentCtrl.get) // all
 router.patch("/http/appointments/:id", auth.protected(...auth.allRoles), auth.authorized([{role: "all"}]), appointmentCtrl.patch) // all
 
 // no protect

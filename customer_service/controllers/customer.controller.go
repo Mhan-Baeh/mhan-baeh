@@ -10,6 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -98,6 +99,7 @@ func (db *DBController) UpdateCustomer(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Customer not found"})
 		return
 	}
+	currentPassword := existingCustomer.Password
 
 	// Bind the request JSON to the existing customer
 	if err := c.ShouldBindJSON(&existingCustomer); err != nil {
@@ -105,6 +107,21 @@ func (db *DBController) UpdateCustomer(c *gin.Context) {
 		return
 	}
 
+	if existingCustomer.Password == "" {
+		existingCustomer.Password = currentPassword
+	}
+
+	// hash the password if password and not hashed
+	if len(existingCustomer.Password) <= 16 {
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(existingCustomer.Password), bcrypt.DefaultCost)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash the password"})
+			return
+		}
+		existingCustomer.Password = string(hashedPassword)
+	}
+	
+	
 	// Update the customer in the database
 	if err := db.Database.Save(&existingCustomer).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update customer"})
