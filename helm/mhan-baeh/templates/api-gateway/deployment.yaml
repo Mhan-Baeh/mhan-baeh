@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gateway-pod
+  template:
+    metadata:
+      labels:
+        app: api-gateway-pod
+    spec:
+      containers: 
+        - name: api-gateway
+          image: champkub6/api-gateway:v1.0.0
+          ports:
+            - containerPort: 3000
+          env:
+            - name: ADMIN_URI
+              value: http://admin-service:8000
+            - name: APPOINTMENT_SERVICE_URL
+              value: http://appointment-service:8001
+            - name: ADMIN_SECRET
+              value: ADMIN_SERVICE_SECRET_KEY
+            - name: CUSTOMER_URI
+              value: http://customer-service:8002
+            - name: CUSTOMER_SECRET
+              value: CUSTOMER_SERVICE_SECRET_KEY
+            - name: HOUSEKEEPER_URI
+              value: http://housekeeper-service:8003
+            - name: HOUSEKEEPER_SECRET
+              value: HOUSEKEEPER_SERVICE_SECRET_KEY
+            - name: APPOINTMENT_URI
+              value: http://appointment-service:8001
+            - name: PORT
+              value: "3000"
+            - name: KAFKA_HOST
+              value: kafka-service:9092
