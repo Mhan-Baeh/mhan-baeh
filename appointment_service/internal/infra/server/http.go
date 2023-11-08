@@ -37,7 +37,7 @@ func (s *HTTPServer) Run(cfg *config.Config) {
 	// postgres
 	router.GET("/appointments", s.handler.AppointmentHandler.GetAllAppointment)
 	router.POST("/appointments", s.handler.AppointmentHandler.CreateAppointment)
-	router.PATCH("/appointments/:id/status", s.handler.AppointmentHandler.UpdateAppointmentStatus)
+	router.PATCH("/appointments/:id", s.handler.AppointmentHandler.UpdateAppointmentStatus)
 	router.GET("/appointments/:id", s.handler.AppointmentHandler.GetAppointmentById)
 
 	// kafka
