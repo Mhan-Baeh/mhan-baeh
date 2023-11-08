@@ -23,9 +23,9 @@ spec:
             - name: HTTPPort
               value: "8081"
             - name: DB_HOST
-              value: app-postgres
+              value: postgres-appointment-service
             - name: DB_PORT
-              value: "5432"
+              value: "5433"
             - name: DB_USER
               value: user
             - name: DB_NAME
@@ -35,7 +35,7 @@ spec:
             - name: DB_SSLMODE
               value: disable
             - name: POSTGRES_DSN
-              value: postgres://user:password@app_postgres:5432/appointment_db?sslmode=disable
+              value: postgres://user:password@postgres-appointment-service:5432/appointment_db?sslmode=disable
             - name: MONGO_DSN
               value: mongodb://root:password@mhan-baeh-mongodb-headless:27017
             - name: MONGO_DB_NAME

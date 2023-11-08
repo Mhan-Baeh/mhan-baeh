@@ -1,0 +1,139 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-customer-deployment
+  labels:
+    app: postgres-customer-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-customer-pod
+  template:
+    metadata:
+      labels:
+        app: postgres-customer-pod
+    spec:
+      containers:
+        - name: postgres-customer
+          image: postgres:13
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: user
+            - name: POSTGRES_PASSWORD
+              value: password
+            - name: POSTGRES_DB
+              value: customer_db
+          volumeMounts:
+            - name: postgres-customer-persistent-storage
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgres-customer-persistent-storage
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-appointment-deployment
+  labels:
+    app: postgres-appointment-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-appointment-pod
+  template:
+    metadata:
+      labels:
+        app: postgres-appointment-pod
+    spec:
+      containers:
+        - name: postgres-appointment
+          image: postgres:13
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: user
+            - name: POSTGRES_PASSWORD
+              value: password
+            - name: POSTGRES_DB
+              value: appointment_db
+          volumeMounts:
+            - name: postgres-appointment-persistent-storage
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgres-appointment-persistent-storage
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-housekeeper-deployment
+  labels:
+    app: postgres-housekeeper-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-housekeeper-pod
+  template:
+    metadata:
+      labels:
+        app: postgres-housekeeper-pod
+    spec:
+      containers:
+        - name: postgres-housekeeper
+          image: postgres:13
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: user
+            - name: POSTGRES_PASSWORD
+              value: password
+            - name: POSTGRES_DB
+              value: housekeeper_db
+          volumeMounts:
+            - name: postgres-housekeeper-persistent-storage
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgres-housekeeper-persistent-storage
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-admin-deployment
+  labels:
+    app: postgres-admin-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-admin-pod
+  template:
+    metadata:
+      labels:
+        app: postgres-admin-pod
+    spec:
+      containers:
+        - name: postgres-admin
+          image: postgres:13
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: user
+            - name: POSTGRES_PASSWORD
+              value: password
+            - name: POSTGRES_DB
+              value: admin_db
+          volumeMounts:
+            - name: postgres-admin-persistent-storage
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgres-admin-persistent-storage
+

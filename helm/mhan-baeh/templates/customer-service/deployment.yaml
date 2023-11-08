@@ -22,7 +22,7 @@ spec:
             - containerPort: 18081
           env:
             - name: DATABASE_HOST
-              value: customer_postgres
+              value: postgres-customer-service
             - name: DATABASE_USERNAME
               value: user
             - name: DATABASE_PASSWORD
@@ -32,7 +32,7 @@ spec:
             - name: DATABASE_NAME
               value: customer_db
             - name: DATABASE_URL
-              value: postgresql://user:password@customer_postgres:5432/customer_db?sslmode=disable
+              value: postgresql://user:password@postgres-customer-service:5432/customer_db?sslmode=disable
             - name: SERVER_PORT
               value: "8082"
             - name: JWT_SECRET
