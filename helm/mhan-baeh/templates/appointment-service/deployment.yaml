@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appointment-deployment
+  labels:
+    app: appointment-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: appointment-pod
+  template:
+    metadata:
+      labels:
+        app: appointment-pod
+    spec:
+      containers:
+        - name: appointment
+          image: champkub6/appointment-service
+          ports:
+            - containerPort: 8001
+          env:
+            - name: HTTPPort
+              value: "8081"
+            - name: DB_HOST
+              value: postgres-appointment-service
+            - name: DB_PORT
+              value: "5433"
+            - name: DB_USER
+              value: user
+            - name: DB_NAME
+              value: appointment_db
+            - name: DB_PASSWORD
+              value: password
+            - name: DB_SSLMODE
+              value: disable
+            - name: POSTGRES_DSN
+              value: postgres://user:password@postgres-appointment-service:5432/appointment_db?sslmode=disable
+            - name: MONGO_DSN
+              value: mongodb://root:password@mhan-baeh-mongodb-headless:27017
+            - name: MONGO_DB_NAME
+              value: appointment_service
+            - name: KAFKA_BROKER
+              value: kafka-service:9092
+            - name: CUSTOMER_SERVICE_GRPC_HOST
+              value: customer-service:18081
+            - name: HOUSEKEEPER_SERVICE_GRPC_HOST
+              value: housekeeper-service:18082
+
+
+
+
