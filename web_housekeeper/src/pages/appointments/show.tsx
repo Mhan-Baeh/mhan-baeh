@@ -223,15 +223,25 @@ export const AppointmentShow: React.FC = () => {
                       disabled
                     >
                       <MenuItem value={"DONE"} selected>
-                        CLEANING
+                        DONE
                       </MenuItem>
                     </Select>
                   )}
                 </FormControl>
                 <div className="py-2 flex items-center">
-                  <Button onClick={handleStatusChange} variant="contained">
-                    OK
-                  </Button>
+                  {status === "DONE" ? (
+                    <Button
+                      onClick={handleStatusChange}
+                      variant="contained"
+                      disabled
+                    >
+                      OK
+                    </Button>
+                  ) : (
+                    <Button onClick={handleStatusChange} variant="contained">
+                      OK
+                    </Button>
+                  )}
                 </div>
               </div>
             )}
