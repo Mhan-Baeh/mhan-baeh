@@ -20,22 +20,28 @@ export const AppointmentList = () => {
   const columns = React.useMemo<GridColumns<any>>(
     () => [
       {
-        field: "name",
+        field: "housekeeperName",
         headerName: "Housekeeper name",
         type: "number",
         align: "center",
         headerAlign: "center",
+        renderCell: function render({ row }) {
+          return row.housekeeper.name;
+        },
         minWidth: 200,
         sortable: false,
         filterable: false,
       },
       {
-        field: "phone",
+        field: `housekeeperPhone`,
         headerName: "Phone Number",
         type: "string",
         align: "center",
         headerAlign: "center",
         minWidth: 150,
+        renderCell: function render({ row }) {
+          return row.housekeeper.phone;
+        },
         sortable: false,
         filterable: false,
       },
@@ -60,12 +66,15 @@ export const AppointmentList = () => {
         filterable: false,
       },
       {
-        field: "address",
+        field: "addressAddress",
         headerName: "Address",
         type: "string",
         align: "center",
         headerAlign: "center",
         minWidth: 300,
+        renderCell: function render({ row }) {
+          return row.address.address;
+        },
         sortable: false,
         filterable: false,
       },
@@ -85,7 +94,7 @@ export const AppointmentList = () => {
         type: "string",
         align: "center",
         headerAlign: "center",
-        minWidth: 150,
+        minWidth: 200,
         renderCell: function render({ value }) {
           const date = new Date(value);
           return date.toLocaleString();
@@ -99,27 +108,11 @@ export const AppointmentList = () => {
         type: "string",
         align: "center",
         headerAlign: "center",
-        minWidth: 150,
+        minWidth: 200,
         renderCell: function render({ value }) {
           const date = new Date(value);
           return date.toLocaleString();
         },
-        sortable: false,
-        filterable: false,
-      },
-      {
-        field: "actions",
-        headerName: "Actions",
-        renderCell: function render({ row }) {
-          return (
-            <>
-              <DeleteButton hideText recordItemId={row.appointment_id} />
-            </>
-          );
-        },
-        align: "center",
-        headerAlign: "center",
-        minWidth: 100,
         sortable: false,
         filterable: false,
       },

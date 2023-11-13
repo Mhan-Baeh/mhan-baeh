@@ -7,10 +7,13 @@ import {
   axiosInstance,
 } from "@pankod/refine-simple-rest";
 
-
-const urlMap = {
+const urlGetManyMap = {
   appointments: "appointment-api/http/appointments",
   housekeepers: "housekeeper-api/housekeepers",
+};
+
+const urlPostCreateMap = {
+  housekeepers: "housekeeper-api/housekeeper",
 };
 
 const dataProvider = (
@@ -27,13 +30,12 @@ const dataProvider = (
     filters,
     sort,
   }) => {
-
     let token = localStorage.getItem("auth_admin");
-  
+
     if (resource === "appointments") {
-      resource = urlMap[resource];
+      resource = urlGetManyMap[resource];
     } else if (resource === "housekeepers") {
-      resource = urlMap[resource];
+      resource = urlGetManyMap[resource];
     }
     const url = `${apiUrl}/${resource}/`;
 
@@ -69,10 +71,10 @@ const dataProvider = (
         },
       }
     );
-
-    const total = data.data?.total;
+    console.log("got data from api", data);
+    const total = data?.data?.length > 0 ? data?.data?.length : 0;
     return {
-      data: data?.data.items,
+      data: data?.data,
       total,
     };
   },
@@ -88,9 +90,20 @@ const dataProvider = (
   },
 
   create: async ({ resource, variables }) => {
-    const url = `${apiUrl}/${resource}`;
 
-    const { data } = await httpClient.post(url, variables);
+
+    if (resource === "housekeepers") {
+      resource = urlPostCreateMap[resource];
+    }
+
+    const url = `${apiUrl}/${resource}`;
+    let token = localStorage.getItem("auth_admin");
+
+    const { data } = await httpClient.post(url, variables, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     return {
       data,
@@ -102,7 +115,10 @@ const dataProvider = (
     if (resource.endsWith("s")) {
       resource = resource.slice(0, -1);
     }
-    const { data } = await httpClient.put(url, { ...variables, [`${resource}_uuid`]:id });
+    const { data } = await httpClient.put(url, {
+      ...variables,
+      [`${resource}_uuid`]: id,
+    });
 
     return {
       data,
@@ -114,7 +130,7 @@ const dataProvider = (
 
     const { data } = await httpClient.get(url);
 
-    if (!!data?.status_code &&!!data?.data) {
+    if (!!data?.status_code && !!data?.data) {
       return {
         data: data?.data,
       };

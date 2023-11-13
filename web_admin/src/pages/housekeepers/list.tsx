@@ -24,7 +24,7 @@ export const HouseKeeperList = () => {
         type: "number",
         align: "center",
         headerAlign: "center",
-        minWidth: 250,
+        minWidth: 350,
         sortable: false,
         filterable: false,
       },
@@ -54,7 +54,7 @@ export const HouseKeeperList = () => {
         type: "number",
         align: "center",
         headerAlign: "center",
-        minWidth: 200,
+        minWidth: 250,
         sortable: false,
         filterable: false,
       },
@@ -68,22 +68,7 @@ export const HouseKeeperList = () => {
         sortable: false,
         filterable: false,
       },
-      {
-        field: "actions",
-        headerName: "Actions",
-        renderCell: function render({ row }) {
-          return (
-            <>
-              <DeleteButton hideText recordItemId={row.housekeeper_uuid} />
-            </>
-          );
-        },
-        align: "center",
-        headerAlign: "center",
-        minWidth: 150,
-        sortable: false,
-        filterable: false,
-      },
+     
     ],
     []
   );
