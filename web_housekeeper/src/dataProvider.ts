@@ -21,7 +21,7 @@ const dataProvider = (
     filters,
     sort,
   }) => {
-    const url = `${apiUrl}/${resource}/`;
+    const url = `${apiUrl}/appointment-api/http/${resource}/`;
 
     const { current = 1, pageSize = 10 } = pagination ?? {};
 
@@ -147,7 +147,6 @@ const dataProvider = (
     if (query) {
       requestUrl = `${requestUrl}&${stringify(query)}`;
     }
-
     if (headers) {
       httpClient.defaults.headers = {
         ...httpClient.defaults.headers,

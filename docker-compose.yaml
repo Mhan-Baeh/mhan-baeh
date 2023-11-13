@@ -83,7 +83,7 @@ services:
       DB_HOST: housekeeper_postgres
       DB_PORT: 5432
       DB_USER: user
-      DB_PASSWOR: password
+      DB_PASSWORD: password
       DB_NAME: housekeeper_db
       JWT_SECRET: HOUSEKEEPER_SERVICE_SECRET_KEY
       JWT_EXPIRES_MINUTES: 60
