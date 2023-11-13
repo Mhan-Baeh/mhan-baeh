@@ -7,9 +7,13 @@ const customerRouter = require('./customer')
 const housekeeperRouter = require('./housekeeper')
 const appointmentRouter = require('./appointment')
 
-const adminOpt = getCORSOption(process.env.ADMIN_UI || "*")
-const customerOpt = getCORSOption(process.env.CUSTOMER_UI || "*");
-const housekeeperOpt = getCORSOption(process.env.HOUSEKEEPER_UI || "*");
+const adminOpt = getCORSOption(process.env.ADMIN_UI.split(",") || "*")
+const customerOpt = getCORSOption(process.env.CUSTOMER_UI.split(",") || "*");
+const housekeeperOpt = getCORSOption(process.env.HOUSEKEEPER_UI.split(",") || "*");
+
+console.log(`cors admin: ${process.env.ADMIN_UI}`)
+console.log(`cors customer: ${process.env.CUSTOMER_UI}`)
+console.log(`cors housekeeper: ${process.env.HOUSEKEEPER_UI}`)
 
 const router = express.Router()
 
