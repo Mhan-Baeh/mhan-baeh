@@ -5,14 +5,14 @@ import { REST_PUBLIC_URI } from "environment";
 const authProvider: AuthProvider = {
   login: async ({ email, password }) => {
     const response = await axiosInstance.post(
-      `${REST_PUBLIC_URI}/api/login`,
+      `${REST_PUBLIC_URI}/customer-api/api/login`,
       {
         email,
         password,
       }
     );
 
-    if (response.status === 200) {
+    if (response.status >= 200 && response.status <= 300) {
       localStorage.setItem("auth", JSON.stringify(response.data));
       return Promise.resolve("/");
     }
@@ -21,16 +21,16 @@ const authProvider: AuthProvider = {
   },
   register: async({email, name, phone, password, confirmPassword}) =>{
     const response = await axiosInstance.post(
-      `${REST_PUBLIC_URI}/api/register`,
+      `${REST_PUBLIC_URI}/customer-api/api/register`,
       {
         email,
         name,
         phone,
         password,
-        confirmPassword
+        confirmPassword,
       }
     );
-    if (response.status === 200) {
+    if (response.status >= 200 && response.status <= 300) {
       return Promise.resolve("/");
     }
     return Promise.reject("/");
