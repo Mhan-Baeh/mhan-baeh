@@ -1,6 +1,6 @@
 dependencies:
-- name: mongodb
-  repository: https://charts.bitnami.com/bitnami
-  version: 12.1.20
-digest: sha256:69984804aa5c779bf4a45ffdf8ece5646d1d0cb0a9806982096f052ced6fba9c
-generated: "2023-11-08T02:29:03.032314+07:00"
+- name: ingress-nginx
+  repository: https://kubernetes.github.io/ingress-nginx
+  version: 4.8.2
+digest: sha256:e2ebb482630bd5af1ad1f00cc387d71582b5934d57c307dbddff1ea131b14822
+generated: "2023-11-13T21:45:30.180781+07:00"
