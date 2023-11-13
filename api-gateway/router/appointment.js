@@ -4,14 +4,19 @@ const auth = require("../middleware/auth")
 
 const router = express.Router()
 
-router.post("/http/jobs", appointmentCtrl.post)
-router.get("/http/jobs", appointmentCtrl.get)
+// protected
+router.post("/http/jobs", auth.protected(auth.admin), auth.authorized([{role: "admin"}]), appointmentCtrl.post) // admin
+router.get("/http/jobs", auth.protected(...auth.allRoles), auth.authorized([{role: "all"}]), appointmentCtrl.get) // all
 
-router.get("/http/appointments", appointmentCtrl.get)
-router.post("/http/appointments", appointmentCtrl.pushKafka)
-router.post("/http/appointments/kafka", appointmentCtrl.post) // TODO remove this
-router.patch("/http/appointments/:id", appointmentCtrl.patch)
-router.get("/health", appointmentCtrl.get)
+// protected
+router.get("/http/appointments", auth.protected(...auth.allRoles), auth.authorized([{role: "all"}]), appointmentCtrl.get) // all
+router.post("/http/appointments", auth.protected(auth.customer), auth.authorized([{role: "customer"}]), appointmentCtrl.pushKafka) // customer
+// router.post("/http/appointments/kafka", appointmentCtrl.post) // TODO remove this
+router.get("/http/appointments/:id", auth.protected(...auth.allRoles), auth.authorized([{role: "all"}]), appointmentCtrl.get) // all
+router.patch("/http/appointments/:id", auth.protected(...auth.allRoles), auth.authorized([{role: "all"}]), appointmentCtrl.patch) // all
+
+// no protect
+router.get("/http/health", appointmentCtrl.get)
 
 
 

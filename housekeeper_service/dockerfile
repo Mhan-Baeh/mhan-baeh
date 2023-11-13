@@ -1,0 +1,12 @@
+FROM golang:latest
+
+WORKDIR /go/src/app
+
+COPY . .
+
+RUN go build -o server server.go
+
+EXPOSE 8083
+EXPOSE 18082
+
+CMD ["./server"]

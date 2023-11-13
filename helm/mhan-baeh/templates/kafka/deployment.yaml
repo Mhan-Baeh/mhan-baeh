@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-deployment
+  labels:
+    app: kafka-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-pod
+  template:
+    metadata:
+      labels:
+        app: kafka-pod
+    spec:
+      containers:
+        - name: zookeeper
+          image: confluentinc/cp-zookeeper:latest
+          ports:
+            - containerPort: 2181
+          env:
+            - name: ZOOKEEPER_CLIENT_PORT
+              value: "2181"
+            - name: ZOOKEEPER_TICK_TIME
+              value: "2000"
+        - name: kafka
+          image: confluentinc/cp-kafka:latest
+          ports:
+            - containerPort: 9092
+          env:
+            - name: KAFKA_BROKER_ID
+              value: "1"
+            - name: KAFKA_ZOOKEEPER_CONNECT
+              value: localhost:2181
+            - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
+              value: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+            - name: KAFKA_ADVERTISED_LISTENERS
+              value: PLAINTEXT://kafka-service:9092,PLAINTEXT_HOST://localhost:9093
+            - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
+              value: "1"
+            - name: KAFKA_TRANSACTION_STATE_LOG_MIN_ISR
+              value: "1"
+            - name: KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR
+              value: "1"
+            - name: KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS
+              value: "0"
+            - name: KAFKA_AUTO_CREATE_TOPICS_ENABLE
+              value: "false"
+          command:
+            - /bin/sh
+            - -c
+            - |
+              # Start Kafka server
+              /etc/confluent/docker/run &
+              # Wait for Kafka to be ready (port to be open)
+              while ! nc -z localhost 9092; do sleep 1; done
+              # Create initial topic
+              kafka-topics --create --if-not-exists --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1 --topic create_appointment
+              # Tail logs to keep the container running
+              tail -f /dev/null

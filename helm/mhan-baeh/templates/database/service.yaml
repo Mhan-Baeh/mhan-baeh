@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-customer-service
+spec:
+  selector:
+    app: postgres-customer-pod
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-appointment-service
+spec:
+  selector:
+    app: postgres-appointment-pod
+  ports:
+    - protocol: TCP
+      port: 5433
+      targetPort: 5432
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-housekeeper-service
+spec:
+  selector:
+    app: postgres-housekeeper-pod
+  ports:
+    - protocol: TCP
+      port: 5434
+      targetPort: 5432
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-admin-service
+spec:
+  selector:
+    app: postgres-admin-pod
+  ports:
+    - protocol: TCP
+      port: 5435
+      targetPort: 5432
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-service
+spec:
+  selector:
+    app: mongodb-pod
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017

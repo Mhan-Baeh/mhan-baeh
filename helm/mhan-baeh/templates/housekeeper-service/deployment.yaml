@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: housekeeper-deployment
+  labels:
+    app: housekeeper-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: housekeeper-pod
+  template:
+    metadata:
+      labels:
+        app: housekeeper-pod
+    spec:
+      containers:
+        - name: housekeeper
+          image: champkub6/housekeeper-service:v1.0.0
+          ports:
+            - containerPort: 8003
+            - containerPort: 18082
+          env:
+            - name: SV_PORT
+              value: "8003"
+            - name: DB_HOST
+              value: postgres-housekeeper-service
+            - name: DB_PORT
+              value: "5434"
+            - name: DB_USER
+              value: user
+            - name: DB_PASSWORD
+              value: password
+            - name: DB_NAME
+              value: housekeeper_db
+            - name: JWT_SECRET
+              value: HOUSEKEEPER_SERVICE_SECRET_KEY
+            - name: JWT_EXPIRES_MINUTES
+              value: "60"
+
+
+

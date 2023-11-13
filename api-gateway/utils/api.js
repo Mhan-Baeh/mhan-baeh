@@ -54,7 +54,6 @@ const post = async (req, res, baseUrl, prefix, headers = {},) => {
             req.body,
             { headers: { authorization: req.headers.authorization, claims: JSON.stringify(req.user), ...headers }, },
         )
-
         setResponse(res, response)
     } catch (error) {
         const err = errorResponse(error)

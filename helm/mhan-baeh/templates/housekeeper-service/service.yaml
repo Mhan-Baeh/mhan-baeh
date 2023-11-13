@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: housekeeper-service
+spec:
+  selector:
+    app: housekeeper-pod
+  ports:
+    - name: rest
+      protocol: TCP
+      port: 8003
+      targetPort: 8003
+    - name: grpc
+      protocol: TCP
+      port: 18082
+      targetPort: 18082
