@@ -7,6 +7,12 @@ import {
   axiosInstance,
 } from "@pankod/refine-simple-rest";
 
+
+const urlMap = {
+  appointments: "appointment-api/http/appointments",
+  housekeepers: "housekeeper-api/housekeepers",
+};
+
 const dataProvider = (
   apiUrl: string,
   httpClient: AxiosInstance = axiosInstance
@@ -21,6 +27,14 @@ const dataProvider = (
     filters,
     sort,
   }) => {
+
+    let token = localStorage.getItem("auth_admin");
+  
+    if (resource === "appointments") {
+      resource = urlMap[resource];
+    } else if (resource === "housekeepers") {
+      resource = urlMap[resource];
+    }
     const url = `${apiUrl}/${resource}/`;
 
     const { current = 1, pageSize = 10 } = pagination ?? {};
@@ -45,9 +59,15 @@ const dataProvider = (
       query._sort = _sort.join(",");
       query._order = _order.join(",");
     }
-
+    // add token to Authorization header
     const { data } = await httpClient.get(
-      `${url}?${stringify(query)}&${stringify(queryFilters)}`
+      `${url}?${stringify(query)}&${stringify(queryFilters)}`,
+
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
 
     const total = data.data?.total;
