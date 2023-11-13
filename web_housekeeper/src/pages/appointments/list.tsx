@@ -23,6 +23,8 @@ export const AppointmentList = () => {
         align: "center",
         headerAlign: "center",
         minWidth: 200,
+        sortable: false,
+        filterable: false,
       },
       {
         field: "phone",
@@ -31,6 +33,8 @@ export const AppointmentList = () => {
         align: "center",
         headerAlign: "center",
         minWidth: 150,
+        sortable: false,
+        filterable: false,
       },
       {
         field: "hour",
@@ -39,6 +43,8 @@ export const AppointmentList = () => {
         align: "center",
         headerAlign: "center",
         minWidth: 100,
+        sortable: false,
+        filterable: false,
       },
       {
         field: "price",
@@ -47,6 +53,8 @@ export const AppointmentList = () => {
         align: "center",
         headerAlign: "center",
         minWidth: 100,
+        sortable: false,
+        filterable: false,
       },
       {
         field: "address",
@@ -55,6 +63,8 @@ export const AppointmentList = () => {
         align: "center",
         headerAlign: "center",
         minWidth: 300,
+        sortable: false,
+        filterable: false,
       },
       {
         field: "status",
@@ -63,6 +73,8 @@ export const AppointmentList = () => {
         align: "center",
         headerAlign: "center",
         minWidth: 150,
+        sortable: false,
+        filterable: false,
       },
       {
         field: "start_date_time",
@@ -75,6 +87,8 @@ export const AppointmentList = () => {
           const date = new Date(value);
           return date.toLocaleString();
         },
+        sortable: false,
+        filterable: false,
       },
       {
         field: "end_date_time",
@@ -87,6 +101,8 @@ export const AppointmentList = () => {
           const date = new Date(value);
           return date.toLocaleString();
         },
+        sortable: false,
+        filterable: false,
       },
       {
         field: "actions",
@@ -94,7 +110,7 @@ export const AppointmentList = () => {
         renderCell: function render({ row }) {
           return (
             <>
-              <DeleteButton hideText recordItemId={row.appointment_id} />
+              <ShowButton hideText recordItemId={row.appointment_id} />
             </>
           );
         },
@@ -113,12 +129,6 @@ export const AppointmentList = () => {
         title={
           <div className="flex justify-between items-center">
             <Typography variant="h5">Appointments</Typography>
-            <Link
-              className="flex no-underline p-2 shadow-md rounded-md text-sm text-white bg-blue-700"
-              to="/hirings"
-            >
-              Create Appointment
-            </Link>
           </div>
         }
       >

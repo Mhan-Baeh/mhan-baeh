@@ -4,7 +4,7 @@ import {
   GlobalStyles,
   ThemeProvider,
   ReadyPage,
-  ErrorComponent
+  ErrorComponent,
 } from "@pankod/refine-mui";
 import { AuthPage } from "components/pages/auth";
 import routerProvider from "@pankod/refine-react-router-v6";
@@ -42,19 +42,17 @@ function App() {
               routes: [
                 {
                   path: "/login",
-                  element: <AuthPage type="login"/>
+                  element: <AuthPage type="login" />,
                 },
                 {
                   path: "/register",
-                  element: <AuthPage type="register"/>
-                
+                  element: <AuthPage type="register" />,
                 },
                 {
                   path: "/forgotPassword",
-                  element: <AuthPage type="forgotPassword"/>
-                
-                }
-              ]
+                  element: <AuthPage type="forgotPassword" />,
+                },
+              ],
             }}
             notificationProvider={notificationProvider}
             Layout={Layout}
@@ -64,28 +62,28 @@ function App() {
               {
                 name: "homes",
                 options: {
-                  label: "HOME"
+                  label: "HOME",
                 },
                 list: HomeShow,
               },
               {
                 name: "hirings",
                 options: {
-                  label: "Hiring"
+                  label: "Hiring",
                 },
                 list: HiringCreate,
               },
               {
                 name: "appointments",
                 options: {
-                  label: "My Appointment"
+                  label: "My Appointment",
                 },
                 list: AppointmentList,
               },
               {
                 name: "accounts",
                 options: {
-                  label: "My Account"
+                  label: "My Account",
                 },
                 list: AccountShow,
               },

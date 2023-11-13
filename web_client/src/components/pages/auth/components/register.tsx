@@ -8,7 +8,7 @@ import {
   useRouterContext,
   useRegister,
 } from "@pankod/refine-core";
-import {RegisterFormTypes} from "../../../../interfaces/auth"
+import { RegisterFormTypes } from "../../../../interfaces/auth";
 import {
   Button,
   TextField,
@@ -92,7 +92,10 @@ export const RegisterPage: React.FC<RegisterProps> = ({
   };
 
   const Content = (
-    <Card className="w-full py-3 rounded-2xl shadow-xl px-8 sm:px-16" {...(contentProps ?? {})}>
+    <Card
+      className="w-full py-3 rounded-2xl shadow-xl px-8 sm:px-16"
+      {...(contentProps ?? {})}
+    >
       <div className="flex flex-col">
         <Typography
           component="h1"
@@ -113,11 +116,7 @@ export const RegisterPage: React.FC<RegisterProps> = ({
             return registerMutate(data);
           })}
         >
-          <Typography
-            color="black"
-          >
-            Email
-          </Typography>
+          <Typography color="black">Email</Typography>
           <TextField
             {...register("email", {
               required: true,
@@ -145,10 +144,7 @@ export const RegisterPage: React.FC<RegisterProps> = ({
             }}
             className="shadow-md"
           />
-          <Typography
-            color="black"
-            className="mt-3"
-          >
+          <Typography color="black" className="mt-3">
             Name
           </Typography>
           <TextField
@@ -171,10 +167,7 @@ export const RegisterPage: React.FC<RegisterProps> = ({
             }}
             className="shadow-md"
           />
-          <Typography
-            color="black"
-            className="mt-3"
-          >
+          <Typography color="black" className="mt-3">
             Phone
           </Typography>
           <TextField
@@ -201,10 +194,7 @@ export const RegisterPage: React.FC<RegisterProps> = ({
             }}
             className="shadow-md"
           />
-          <Typography
-            color="black"
-            className="mt-3"
-          >
+          <Typography color="black" className="mt-3">
             Password
           </Typography>
           <TextField
@@ -219,6 +209,7 @@ export const RegisterPage: React.FC<RegisterProps> = ({
             type="password"
             placeholder="●●●●●●●●"
             autoComplete="current-password"
+            inputProps={{ maxLength: 16 }}
             sx={{
               "& .MuiInputBase-root": {
                 border: "0px solid #ccc",
@@ -228,10 +219,7 @@ export const RegisterPage: React.FC<RegisterProps> = ({
             }}
             className="shadow-md"
           />
-          <Typography
-            color="black"
-            className="mt-3"
-          >
+          <Typography color="black" className="mt-3">
             Confirm Password
           </Typography>
           <TextField
@@ -241,7 +229,9 @@ export const RegisterPage: React.FC<RegisterProps> = ({
             id="confirmPassword"
             fullWidth
             name="confirmPassword"
-            helperText={errors["confirmPassword"] ? errors["confirmPassword"].message : ""}
+            helperText={
+              errors["confirmPassword"] ? errors["confirmPassword"].message : ""
+            }
             error={!!errors.confirmPassword}
             type="password"
             placeholder="●●●●●●●●"
@@ -259,7 +249,12 @@ export const RegisterPage: React.FC<RegisterProps> = ({
           {loginLink ?? (
             <Box display="flex" justifyContent="flex-start">
               <div className="flex justify-between mb-5 mt-3">
-                <Link to="/" className="flex text-xs no-underline text-blue-600 font-thin">Already has an account?</Link>
+                <Link
+                  to="/"
+                  className="flex text-xs no-underline text-blue-600 font-thin"
+                >
+                  Already has an account?
+                </Link>
               </div>
             </Box>
           )}
@@ -270,8 +265,8 @@ export const RegisterPage: React.FC<RegisterProps> = ({
             color="error"
             sx={{
               my: "8px",
-              p:"8px",
-              backgroundColor: "#DC2434"
+              p: "8px",
+              backgroundColor: "#DC2434",
             }}
             disabled={isLoading}
           >
