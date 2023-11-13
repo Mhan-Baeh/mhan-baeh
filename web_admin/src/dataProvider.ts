@@ -10,6 +10,7 @@ import {
 
 const urlMap = {
   appointments: "appointment-api/http/appointments",
+  housekeepers: "housekeeper-api/housekeepers",
 };
 
 const dataProvider = (
@@ -30,6 +31,8 @@ const dataProvider = (
     let token = localStorage.getItem("auth_admin");
   
     if (resource === "appointments") {
+      resource = urlMap[resource];
+    } else if (resource === "housekeepers") {
       resource = urlMap[resource];
     }
     const url = `${apiUrl}/${resource}/`;

@@ -20,9 +20,9 @@ const authProvider: AuthProvider = {
     return Promise.reject("/");
   },
   checkAuth: () => {
-    const user = localStorage.getItem("auth_admin");
+    const token = localStorage.getItem("auth_admin");
 
-    if (user) {
+    if (!!token) {
       return Promise.resolve("/");
     }
 
