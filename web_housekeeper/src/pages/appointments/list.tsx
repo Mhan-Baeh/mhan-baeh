@@ -17,21 +17,27 @@ export const AppointmentList = () => {
   const columns = React.useMemo<GridColumns<any>>(
     () => [
       {
-        field: "name",
+        field: "housekeeperName",
         headerName: "Housekeeper name",
         type: "number",
         align: "center",
         headerAlign: "center",
+        renderCell: function render({ row }) {
+          return row.housekeeper.name;
+        },
         minWidth: 200,
         sortable: false,
         filterable: false,
       },
       {
-        field: "phone",
+        field: "housekeeperPhone",
         headerName: "Phone Number",
         type: "string",
         align: "center",
         headerAlign: "center",
+        renderCell: function render({ row }) {
+          return row.housekeeper.phone;
+        },
         minWidth: 150,
         sortable: false,
         filterable: false,
@@ -57,11 +63,14 @@ export const AppointmentList = () => {
         filterable: false,
       },
       {
-        field: "address",
+        field: "AddressLocation",
         headerName: "Address",
         type: "string",
         align: "center",
         headerAlign: "center",
+        renderCell: function render({ row }) {
+          return row.address.address;
+        },
         minWidth: 300,
         sortable: false,
         filterable: false,

@@ -83,7 +83,7 @@ services:
       DB_HOST: housekeeper_postgres
       DB_PORT: 5432
       DB_USER: user
-      DB_PASSWOR: password
+      DB_PASSWORD: password
       DB_NAME: housekeeper_db
       JWT_SECRET: HOUSEKEEPER_SERVICE_SECRET_KEY
       JWT_EXPIRES_MINUTES: 60
@@ -193,9 +193,9 @@ services:
       HOUSEKEEPER_URI: http://housekeeper_service:8083
       HOUSEKEEPER_SECRET: HOUSEKEEPER_SERVICE_SECRET_KEY
       APPOINTMENT_URI: http://appointment_service:8081
-      # ADMIN_UI: http://localhost:15000
-      # HOUSEKEEPER_UI: http://localhost:15000
-      # CUSTOMER_UI: http://localhost:15000,http://localhost:25000
+      ADMIN_UI: http://localhost:15000
+      HOUSEKEEPER_UI: http://localhost:15000
+      CUSTOMER_UI: http://localhost:15000,http://localhost:25000
 
 volumes:
   database-storage-admin:

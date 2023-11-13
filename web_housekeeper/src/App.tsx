@@ -22,6 +22,22 @@ import { ToastContainer } from "react-toastify";
 import authProvider from "authProvider";
 import { AppointmentList } from "pages/appointments";
 import { AppointmentShow } from "pages/appointments/show";
+import axios, { AxiosRequestConfig } from "axios";
+
+const axiosInstance = axios.create();
+
+axiosInstance.interceptors.request.use((request: AxiosRequestConfig) => {
+  const token = localStorage.getItem("auth_housekeeper");
+
+  if (request.headers) {
+    request.headers["Authorization"] = `Bearer ${token}`;
+  } else {
+    request.headers = {
+      Authorization: `Bearer ${token}`,
+    };
+  }
+  return request;
+});
 
 function App() {
   return (
@@ -32,9 +48,9 @@ function App() {
 
         <RefineSnackbarProvider>
           <Refine
-            // LoginPage={AuthPage}
-            // authProvider={authProvider}
-            dataProvider={dataProvider(`${REST_PUBLIC_URI}`)}
+            LoginPage={AuthPage}
+            authProvider={authProvider}
+            dataProvider={dataProvider(`${REST_PUBLIC_URI}`, axiosInstance)}
             routerProvider={{
               ...routerProvider,
               routes: [
