@@ -111,10 +111,7 @@ export const LoginPage: React.FC<LoginProps> = ({
           })}
         >
           {renderProviders()}
-          <Typography
-            color="black"
-            className="p-0"
-          >
+          <Typography color="black" className="p-0">
             Email
           </Typography>
           <TextField
@@ -137,10 +134,7 @@ export const LoginPage: React.FC<LoginProps> = ({
             }}
             className="shadow-md"
           />
-          <Typography
-            color="black"
-            className="mt-3"
-          >
+          <Typography color="black" className="mt-3">
             Password
           </Typography>
           <TextField
@@ -155,6 +149,7 @@ export const LoginPage: React.FC<LoginProps> = ({
             type="password"
             placeholder="●●●●●●●●"
             autoComplete="current-password"
+            inputProps={{ maxLength: 16 }}
             sx={{
               "& .MuiInputBase-root": {
                 border: "0px solid #ccc",
@@ -173,8 +168,18 @@ export const LoginPage: React.FC<LoginProps> = ({
             }}
           ></Box>
           <div className="flex justify-between mt-3 mb-5">
-            <Link to="/register" className="flex text-xs no-underline text-blue-600 font-thin">Create a new account?</Link>
-            <Link to="/forgotpassword" className="flex text-xs no-underline text-blue-600 font-thin">Forgot your password</Link>
+            <Link
+              to="/register"
+              className="flex text-xs no-underline text-blue-600 font-thin"
+            >
+              Create a new account?
+            </Link>
+            <Link
+              to="/forgotpassword"
+              className="flex text-xs no-underline text-blue-600 font-thin"
+            >
+              Forgot your password
+            </Link>
           </div>
           <Button
             type="submit"
@@ -183,8 +188,8 @@ export const LoginPage: React.FC<LoginProps> = ({
             color="error"
             sx={{
               my: "8px",
-              p:"8px",
-              backgroundColor: "#DC2434"
+              p: "8px",
+              backgroundColor: "#DC2434",
             }}
             disabled={isLoading}
           >

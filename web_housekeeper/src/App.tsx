@@ -21,6 +21,7 @@ import { notificationProvider } from "providers/notificationProvider";
 import { ToastContainer } from "react-toastify";
 import authProvider from "authProvider";
 import { AppointmentList } from "pages/appointments";
+import { AppointmentShow } from "pages/appointments/show";
 
 function App() {
   return (
@@ -54,6 +55,7 @@ function App() {
                   label: "My Appointment",
                 },
                 list: AppointmentList,
+                show: AppointmentShow,
               },
             ]}
           >
