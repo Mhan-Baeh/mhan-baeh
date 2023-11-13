@@ -34,8 +34,8 @@ function App() {
 
         <RefineSnackbarProvider>
           <Refine
-            // LoginPage={AuthPage}
-            // authProvider={authProvider}
+            LoginPage={AuthPage}
+            authProvider={authProvider}
             dataProvider={dataProvider(`${REST_PUBLIC_URI}`)}
             routerProvider={{
               ...routerProvider,
