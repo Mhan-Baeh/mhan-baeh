@@ -38,3 +38,9 @@ spec:
               value: "3000"
             - name: KAFKA_HOST
               value: kafka-service:9092
+            - name: CUSTOMER_UI
+              value: http://localhost:5001
+            - name: HOUSEKEEPER_UI
+              value: http://localhost:5002
+            - name: ADMIN_UI
+              value: http://localhost:5003
