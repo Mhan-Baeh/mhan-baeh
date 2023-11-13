@@ -93,9 +93,11 @@ export const AppointmentShow: React.FC = () => {
   // };
 
   const handleStatusChange = async () => {
+    const token = localStorage.getItem("auth_housekeeper");
     await axiosInstance.patch(
-      `${REST_PUBLIC_URI}/appointment-api/http/appointments/${allData?.appointment_id}/status`,
-      { status: status }
+      `${REST_PUBLIC_URI}/appointment-api/http/appointments/${allData?.appointment_id}`,
+      { status: status },
+      { headers: { Authorization: `Bearer ${token}` } }
     );
     alert(`Status submitted: ${status}`);
   };
@@ -235,19 +237,6 @@ export const AppointmentShow: React.FC = () => {
             )}
           </div>
         </div>
-
-        {/* <form>
-          <label>Status:</label>
-          <input
-            type="text"
-            id="status"
-            value={status}
-            onChange={handleStatusChange}
-          />
-          <Button variant="contained" onClick={handleSubmit}>
-            Submit
-          </Button>
-        </form> */}
       </Show>
     </div>
   );
