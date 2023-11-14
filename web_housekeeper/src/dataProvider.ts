@@ -21,7 +21,7 @@ const dataProvider = (
     filters,
     sort,
   }) => {
-    const url = `${apiUrl}/${resource}/`;
+    const url = `${apiUrl}/appointment-api/http/${resource}/`;
 
     const { current = 1, pageSize = 10 } = pagination ?? {};
 
@@ -50,9 +50,9 @@ const dataProvider = (
       `${url}?${stringify(query)}&${stringify(queryFilters)}`
     );
 
-    const total = data.data?.total;
+    const total = data.data?.length;
     return {
-      data: data?.data.items,
+      data: data?.data,
       total,
     };
   },
@@ -93,7 +93,7 @@ const dataProvider = (
   },
 
   getOne: async ({ resource, id }) => {
-    const url = `${apiUrl}/${resource}/${id}`;
+    const url = `${apiUrl}/appointment-api/http/${resource}/${id}`;
 
     const { data } = await httpClient.get(url);
 
@@ -147,7 +147,6 @@ const dataProvider = (
     if (query) {
       requestUrl = `${requestUrl}&${stringify(query)}`;
     }
-
     if (headers) {
       httpClient.defaults.headers = {
         ...httpClient.defaults.headers,

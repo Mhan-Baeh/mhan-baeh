@@ -11,6 +11,34 @@ import MenuItem from "@mui/material/MenuItem";
 import FormHelperText from "@mui/material/FormHelperText";
 import FormControl from "@mui/material/FormControl";
 import { Typography } from "@pankod/refine-mui";
+import { useEffect, useMemo, useState } from "react";
+import { axiosInstance } from "@pankod/refine-simple-rest";
+import { REST_PUBLIC_URI } from "environment";
+import { getEndpoint } from "endpoints";
+import { parseJwt } from "utils";
+
+interface IAddress {
+  id: string;
+  name: string;
+  address: string;
+  note: string;
+  house_size: number;
+}
+
+interface IBaseAddressResponse {
+  results: IAddress[];
+}
+
+interface IJob {
+  JobId: string;
+  job_name: string;
+  job_rate: number;
+}
+
+interface IBaseJobResponse {
+  data: IJob[];
+}
+
 
 const schema = Yup.object().shape({
   appointment_id: Yup.string().nullable(),
@@ -73,7 +101,6 @@ export const HiringCreate = () => {
     register,
     setValue,
     watch,
-    control,
     formState: { errors },
   } = useForm<any, any, AppointmentFormDataType>({
     resolver: yupResolver(schema),
@@ -111,18 +138,49 @@ export const HiringCreate = () => {
       },
     },
   };
-  const names = [
-    "Oliver Hansen",
-    "Van Henry",
-    "April Tucker",
-    "Ralph Hubbard",
-    "Omar Alexander",
-    "Carlos Abbott",
-    "Miriam Wagner",
-    "Bradley Wilkerson",
-    "Virginia Andrews",
-    "Kelly Snyder",
-  ];
+
+  // get customer id from jwt token and parse token back to json
+  const uid = parseJwt(localStorage.getItem("auth_customer") || "")['uuid'];
+  const [addresses, setAddresses] = useState<IAddress[]>([]);
+  const [jobs, setJobs] = useState<IJob[]>([]);
+
+  const getAddressByCustomerId = async (id: string): Promise<IBaseAddressResponse> => {
+    const url = getEndpoint("customerAddress", "GET");
+    const { data } = await axiosInstance.get(`${REST_PUBLIC_URI}/${url}/${id}`,
+      {
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("auth_customer")}`,
+        },
+      }  
+    )
+    return data;
+  }
+
+  const getJobList = async (): Promise<IBaseJobResponse> => {
+    const url = getEndpoint("jobs", "GET");
+    const { data } = await axiosInstance.get(`${REST_PUBLIC_URI}/${url}`,
+      {
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("auth_customer")}`,
+        },
+      }
+    )
+    return data;
+  }
+
+  useEffect(() => {
+    getAddressByCustomerId(uid).then((res) => {
+      setAddresses(res.results);
+    })
+  }, [uid])
+
+  useEffect(() => {
+    getJobList().then((res) => {
+      setJobs(res.data);
+    })
+  }, [])
+
+
 
   return (
     <Create>
@@ -142,9 +200,17 @@ export const HiringCreate = () => {
                 value={watch("location")}
                 onChange={handleLocChange}
               >
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
+                {addresses.length > 0 ? (
+                  addresses.map((address) => (
+                    <MenuItem key={address.id} value={address.id}>
+                      {address.name}
+                    </MenuItem>
+                  ))
+                ) : (
+                  <MenuItem value={""} selected>
+                    No address
+                  </MenuItem>
+                )}
               </Select>
             </FormControl>
           </div>
@@ -168,12 +234,12 @@ export const HiringCreate = () => {
                 placeholder="jobs"
                 MenuProps={MenuProps}
               >
-                {names.map((name) => (
-                  <MenuItem key={name} value={name}>
+                {jobs.map((job) => (
+                  <MenuItem key={job.job_name} value={job.JobId}>
                     <Checkbox
-                      checked={watch("to_do_list").indexOf(name) > -1}
+                      checked={watch("to_do_list").indexOf(job.JobId) > -1}
                     />
-                    <ListItemText primary={name} />
+                    <ListItemText primary={job.job_name} />
                   </MenuItem>
                 ))}
               </Select>
