@@ -1,5 +1,14 @@
-import { Box, Checkbox, Chip, Create, Input, ListItemText, TextField, TextareaAutosize } from "@pankod/refine-mui";
-
+import {
+  Box,
+  Checkbox,
+  Chip,
+  Create,
+  Input,
+  ListItemText,
+  TextField,
+  TextareaAutosize,
+  NumberField
+} from "@pankod/refine-mui";
 import { useForm } from "@pankod/refine-react-hook-form";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -18,11 +27,13 @@ import { getEndpoint } from "endpoints";
 import { parseJwt } from "utils";
 
 interface IAddress {
-  id: string;
+  address_id: string;
+  customer_id: string;
   name: string;
   address: string;
   note: string;
   house_size: number;
+  created_at: string;
 }
 
 interface IBaseAddressResponse {
@@ -39,55 +50,17 @@ interface IBaseJobResponse {
   data: IJob[];
 }
 
-
 const schema = Yup.object().shape({
-  appointment_id: Yup.string().nullable(),
   customer_id: Yup.string().required("This field is required"),
-  housekeeper_id: Yup.string().required("This field is required"),
   address_id: Yup.string().required("This field is required"),
   start_date_time: Yup.date()
-    .required("This field is required")
-    .transform((value, originalValue) => {
-      const parsedValue = new Date(originalValue);
-
-      if (isNaN(parsedValue.getTime())) {
-        throw new Yup.ValidationError("Invalid date format", originalValue);
-      }
-
-      return parsedValue;
-    }),
+    .required("This field is required"),
   end_date_time: Yup.date()
-    .required("This field is required")
-    .transform((value, originalValue) => {
-      const parsedValue = new Date(originalValue);
-
-      if (isNaN(parsedValue.getTime())) {
-        throw new Yup.ValidationError("Invalid date format", originalValue);
-      }
-
-      return parsedValue;
-    }),
+    .required("This field is required"),
   hour: Yup.number()
-    .required("This field is required")
-    .transform((value, originalValue) => {
-      const parsedValue = parseInt(originalValue);
-
-      if (isNaN(parsedValue)) {
-        throw new Yup.ValidationError("Invalid hour format", originalValue);
-      }
-      return parsedValue;
-    }),
+    .required("This field is required"),
   price: Yup.number()
-    .required("This field is required")
-    .transform((value, originalValue) => {
-      const parsedValue = parseFloat(originalValue);
-
-      if (isNaN(parsedValue)) {
-        throw new Yup.ValidationError("Invalid price format", originalValue);
-      }
-
-      return parsedValue;
-    }),
+    .required("This field is required"),
   note: Yup.string().required("This field is required"),
   to_do_list: Yup.array()
     .of(Yup.string().required("Please select at least one to do list"))
@@ -104,15 +77,17 @@ export const HiringCreate = () => {
     formState: { errors },
   } = useForm<any, any, AppointmentFormDataType>({
     resolver: yupResolver(schema),
+    mode: "onChange",
     defaultValues: {
-      location: "",
       to_do_list: [],
       hour: 0,
+      status: "BOOKED",
     },
   });
 
   const handleLocChange = (event: SelectChangeEvent) => {
-    setValue("location", event.target.value);
+    console.log("address_id", event.target.value);
+    setValue("address_id", event.target.value, {shouldValidate: true});
   };
 
   const handleJobsChange = (event: SelectChangeEvent<string[]>) => {
@@ -125,7 +100,7 @@ export const HiringCreate = () => {
     } else {
       jobs = value;
     }
-    setValue("to_do_list", jobs);
+    setValue("to_do_list", jobs, { shouldValidate: true });
   };
 
   const ITEM_HEIGHT = 48;
@@ -140,128 +115,295 @@ export const HiringCreate = () => {
   };
 
   // get customer id from jwt token and parse token back to json
-  const uid = parseJwt(localStorage.getItem("auth_customer") || "")['uuid'];
+  const uid = parseJwt(localStorage.getItem("auth_customer") || "")["uuid"];
   const [addresses, setAddresses] = useState<IAddress[]>([]);
   const [jobs, setJobs] = useState<IJob[]>([]);
 
-  const getAddressByCustomerId = async (id: string): Promise<IBaseAddressResponse> => {
+  const estimatedHour = useMemo(() => {
+    // calculate hour for job and house size
+    const hour = watch("to_do_list").reduce((acc, cur) => {
+      const job = jobs.find((job) => job.JobId === cur);
+      if (job) {
+        return acc + job.job_rate;
+      }
+      return acc;
+    }, 0);
+
+    const houseSize =
+      addresses.find((address) => address.address_id === watch("address_id"))
+        ?.house_size || 0;
+    setValue("price", hour * houseSize, { shouldValidate: true });
+    return hour * houseSize;
+  }, [addresses, jobs, watch, watch("address_id"), watch("to_do_list")]);
+
+  const getAddressByCustomerId = async (
+    id: string
+  ): Promise<IBaseAddressResponse> => {
     const url = getEndpoint("customerAddress", "GET");
-    const { data } = await axiosInstance.get(`${REST_PUBLIC_URI}/${url}/${id}`,
+    const { data } = await axiosInstance.get(
+      `${REST_PUBLIC_URI}/${url}/${id}`,
       {
         headers: {
-          "Authorization": `Bearer ${localStorage.getItem("auth_customer")}`,
+          Authorization: `Bearer ${localStorage.getItem("auth_customer")}`,
         },
-      }  
-    )
+      }
+    );
     return data;
-  }
+  };
 
   const getJobList = async (): Promise<IBaseJobResponse> => {
     const url = getEndpoint("jobs", "GET");
-    const { data } = await axiosInstance.get(`${REST_PUBLIC_URI}/${url}`,
-      {
-        headers: {
-          "Authorization": `Bearer ${localStorage.getItem("auth_customer")}`,
-        },
-      }
-    )
+    const { data } = await axiosInstance.get(`${REST_PUBLIC_URI}/${url}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("auth_customer")}`,
+      },
+    });
     return data;
-  }
+  };
 
   useEffect(() => {
+    setValue("customer_id", uid );
     getAddressByCustomerId(uid).then((res) => {
       setAddresses(res.results);
-    })
-  }, [uid])
+    });
+  }, [setValue, uid]);
 
   useEffect(() => {
     getJobList().then((res) => {
       setJobs(res.data);
-    })
-  }, [])
+    });
+  }, []);
 
+  const validateDateTimeRange = (value: string | Date) => {
+    const startedAt = watch(`start_date_time`);
+    const endedAt = value as string;
+    console.log("Check datetime")
+    console.log("startedAt", startedAt)
+    console.log("endedAt", endedAt)
+    if (startedAt && endedAt && endedAt < startedAt) {
+      return "Second datetime cannot be earlier than the first datetime";
+    }
+    return true;
+  };
 
+  const saveButtonPropsHandler = () => {
+    if (formLoading) {
+      return {
+        ...saveButtonProps,
+        disabled: true,
+      };
+    }
+    return saveButtonProps;
+  };
+  useEffect(() => {
+    if (watch("hour") < estimatedHour) {
+      setValue("hour", estimatedHour, { shouldValidate: true })
+    }
+  }, [estimatedHour, setValue])
+  
 
+  useEffect(() => {
+    console.log("error", errors);
+    console.log("watch", watch());
+  },[])
   return (
-    <Create>
-      <Box
-        component="form"
-        sx={{ display: "flex", flexDirection: "column" }}
-        autoComplete="off"
-      >
-        <div className="ml-3 w-7/12">
-          <div className="flex justify-between">
-            <Typography variant="subtitle1" alignSelf="center" className="mr-3">
-              Location
-            </Typography>
-            <FormControl sx={{ m: 1, width: 450 }}>
-              <Select
-                className="w-2/3"
-                value={watch("location")}
-                onChange={handleLocChange}
+    <div className="p-5">
+      <Create saveButtonProps={saveButtonPropsHandler()}>
+        <Box
+          component="form"
+          sx={{ display: "flex", flexDirection: "column" }}
+          autoComplete="off"
+        >
+          <div className="ml-3 w-7/12">
+            <div className="flex justify-between">
+              <Typography
+                variant="subtitle1"
+                alignSelf="center"
+                className="mr-3"
               >
-                {addresses.length > 0 ? (
-                  addresses.map((address) => (
-                    <MenuItem key={address.id} value={address.id}>
-                      {address.name}
+                Location
+              </Typography>
+              <FormControl sx={{ m: 1, width: 450 }}>
+                <Select
+                  {...register("address_id")}
+                  className="w-2/3"
+                  value={watch("address_id") || ""}
+                  onChange={handleLocChange}
+                >
+                  {addresses.length > 0 ? (
+                    addresses.map((address) => (
+                      <MenuItem
+                        key={address.address_id}
+                        value={address.address_id}
+                      >
+                        {address.name}
+                      </MenuItem>
+                    ))
+                  ) : (
+                    <MenuItem key={"noItem"} value={""}>
+                      No address
                     </MenuItem>
-                  ))
-                ) : (
-                  <MenuItem value={""} selected>
-                    No address
-                  </MenuItem>
-                )}
-              </Select>
-            </FormControl>
-          </div>
-          <div className="flex justify-between">
-            <Typography variant="subtitle1" alignSelf="center" className="mr-3">
-              To Do List
-            </Typography>
-            <FormControl sx={{ m: 1, width: 450 }}>
-              <Select
-                className="w-2/3"
-                multiple
-                value={watch("to_do_list")}
-                onChange={handleJobsChange}
-                renderValue={(selected) => (
-                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                    {selected.map((value) => (
-                      <Chip key={value} label={value} />
-                    ))}
-                  </Box>
-                )}
-                placeholder="jobs"
-                MenuProps={MenuProps}
+                  )}
+                </Select>
+              </FormControl>
+            </div>
+            {errors.address_id && (
+              <Typography color="error" variant="caption">
+                {errors.address_id.message}
+              </Typography>
+            )}
+            <div className="flex justify-between">
+              <Typography
+                variant="subtitle1"
+                alignSelf="center"
+                className="mr-3"
               >
-                {jobs.map((job) => (
-                  <MenuItem key={job.job_name} value={job.JobId}>
-                    <Checkbox
-                      checked={watch("to_do_list").indexOf(job.JobId) > -1}
-                    />
-                    <ListItemText primary={job.job_name} />
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+                To Do List
+              </Typography>
+              <FormControl sx={{ m: 1, width: 450 }}>
+                <Select
+                  className="w-2/3"
+                  multiple
+                  value={watch("to_do_list") || []}
+                  onChange={handleJobsChange}
+                  renderValue={(selected) => (
+                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                      {selected.map((value) => (
+                        <Chip
+                          key={value}
+                          label={
+                            jobs.find((job) => job.JobId === value)?.job_name
+                          }
+                        />
+                      ))}
+                    </Box>
+                  )}
+                  placeholder="jobs"
+                  MenuProps={MenuProps}
+                >
+                  {jobs.map((job) => (
+                    <MenuItem key={job.JobId} value={job.JobId}>
+                      <Checkbox
+                        checked={watch("to_do_list").indexOf(job.JobId) > -1}
+                      />
+                      <ListItemText primary={job.job_name} />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
+            {errors.to_do_list && (
+              <Typography color="error" variant="caption">
+                {errors.to_do_list.message}
+              </Typography>
+            )}
           </div>
-        </div>
 
-        <div className="flex justify-end">
-          <div className=" w-fit border-2 rounded-md bg-[#283DA0]">
-            <Typography className="p-2" color={"white"}>
-              Estimated time: {watch("hour")} hours
+          <div className="flex justify-end">
+            <div className=" w-fit border-2 rounded-md bg-[#283DA0]">
+              <Typography className="p-2" color={"white"}>
+                Estimated time: {estimatedHour} hours
+              </Typography>
+            </div>
+          </div>
+
+          <div className="ml-3 py-2 w-full">
+            <Typography variant="subtitle1" className="mr-3">
+              Hour
             </Typography>
+            <TextField
+              {...register("hour", {
+                required: "This field is required",
+                setValueAs: (value) => Number(value),
+                validate: (value) => {
+                  if (value > estimatedHour) {
+                    return "Hour must be less than estimated hour";
+                  }
+                  if (value <= 0) {
+                    return "Hour must be greater than 0";
+                  }
+                  return true;
+                },
+                onChange: (e) => {
+                  setValue("hour", Number(e.target.value), { shouldValidate: true })
+                },
+                onBlur: (e) => {
+                  let val = Number(e.target.value);
+                  setValue("hour", val < estimatedHour ? estimatedHour: val, { shouldValidate: true })
+                }
+               
+              })}
+              
+              className="w-full pr-3"
+              type="number"
+              error={!!errors.hour}
+              helperText={errors.hour?.message}
+            />
           </div>
-        </div>
+          <div className="flex ml-3 pt-4">
+            <div className="w-full">
+              <Typography variant="subtitle1" className="mr-3">
+                Start date time
+              </Typography>
+              <TextField
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                fullWidth
+                inputProps={{
+                  ...register(`start_date_time` as const, {
+                    required: true,
+                    setValueAs: (value) => new Date(value),
+                    validate: validateDateTimeRange,
+                  }),
+                }}
+                error={!!(errors as any)?.start_date_time}
+                type="datetime-local"
+                className="pr-3"
+                name="start_date_time"
+              />
+            </div>
+            <div className="w-full">
+              <Typography variant="subtitle1" className="mr-3">
+                End date time
+              </Typography>
+              <TextField
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                fullWidth
+                inputProps={{
+                  ...register(`end_date_time` as const, {
+                    required: true,
+                    setValueAs: (value) => new Date(value),
+                    validate: validateDateTimeRange,
+                    onChange: (e) => {
+                      setValue("end_date_time", e.target.value, { shouldValidate: true })
+                    },
+                  }),
+                }}
+                error={!!(errors as any)?.end_date_time}
+                type="datetime-local"
+                name="end_date_time"
+              />
+            </div>
+          </div>
 
-        <div className="ml-3 py-4 w-full">
-          <Typography variant="subtitle1" className="mr-3">
-            Note (phone number, special request, etc.)
-          </Typography>
-          <TextField className="w-full pr-3" rows="3" multiline />
-        </div>
-      </Box>
-    </Create>
+          <div className="ml-3 py-4 w-full">
+            <Typography variant="subtitle1" className="mr-3">
+              Note (phone number, special request, etc.)
+            </Typography>
+            <TextField
+              className="w-full pr-3"
+              rows="3"
+              multiline
+              error={!!errors.note}
+              helperText={errors.note?.message}
+              {...register("note")}
+            />
+          </div>
+        </Box>
+      </Create>
+    </div>
   );
 };

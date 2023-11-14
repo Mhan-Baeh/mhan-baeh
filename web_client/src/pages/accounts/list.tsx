@@ -21,6 +21,11 @@ import { Typography } from "@pankod/refine-mui";
 import { useEffect, useMemo, useState } from "react";
 import { CustomerFormDataType } from "interfaces/customer";
 import FormItem from "components/FormItem";
+import { getEndpoint } from "endpoints";
+import { parseJwt } from "utils";
+import { axiosInstance } from "@pankod/refine-simple-rest";
+import { REST_PUBLIC_URI } from "environment";
+import { useShow } from "@pankod/refine-core";
 
 const schema = Yup.object({
   customer_id: Yup.string().nullable(),
@@ -37,8 +42,18 @@ const RowShow = (
   note: string,
   size: string
 ) => {
-  const handleButtonClick = () => {
+  const handleButtonClick = async () => {
     console.log(id);
+    const url = getEndpoint("address", "DELETE");
+    const { data } = await axiosInstance.delete(
+      `${REST_PUBLIC_URI}/${url}/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_customer")}`,
+        },
+      }
+    );
+    alert("ok");
   };
 
   return (
@@ -69,39 +84,152 @@ interface CustomerAddressType {
   note: string;
   house_size: string;
 }
+interface IBaseCustomerResponse {
+  results: CustomerFormDataType;
+}
 
-export const AccountShow = () => {
+interface IBaseAddressResponse {
+  results: CustomerAddressType[];
+}
+
+interface dataType {
+  data: CustomerFormDataType;
+}
+
+export const AccountShow: React.FC = () => {
   const {
-    saveButtonProps,
-    refineCore: { formLoading },
-    register,
-    setValue,
-    watch,
-    control,
-    formState: { errors },
-  } = useForm<any, any, CustomerFormDataType>({
-    mode: "onChange",
-    resolver: yupResolver(schema),
-  });
+    queryResult: { data, isLoading, isError },
+  } = useShow<dataType>();
 
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [fetchRow, setFetchRow] = useState<boolean>(false);
+  const [fetchInfo, setFetchInfo] = useState<boolean>(false);
+
   const [rows, setRows] = useState<CustomerAddressType[]>([]);
   const [isAdd, setIsAdd] = useState<boolean>(false);
+
   const [newName, setNewName] = useState<string>("");
   const [newAddress, setNewAddress] = useState<string>("");
   const [newNote, setNewNote] = useState<string>("");
   const [newSize, setNewSize] = useState<string>("");
 
-  const saveButtonPropsHandler = () => {
-    if (formLoading || loading) {
-      return {
-        ...saveButtonProps,
-        disabled: true,
-      };
-    }
-    return saveButtonProps;
+  const [customerEmail, setCustomerEmail] = useState<string>("");
+  const [customerPassword, setCustomerPassword] = useState<string>("");
+  const [customerPhone, setCustomerPhone] = useState<string>("");
+  const [customerName, setCustomerName] = useState<string>("");
+
+  const uid = parseJwt(localStorage.getItem("auth_customer") || "")["uuid"];
+
+  const getAddressByCustomerId = async (
+    id: string
+  ): Promise<IBaseAddressResponse> => {
+    const url = getEndpoint("customerAddress", "GET");
+    const { data } = await axiosInstance.get(
+      `${REST_PUBLIC_URI}/${url}/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_customer")}`,
+        },
+      }
+    );
+    return data;
   };
 
+  const getInfoByCustomerId = async (
+    id: string
+  ): Promise<IBaseCustomerResponse> => {
+    const url = getEndpoint("customer", "GET");
+    const { data } = await axiosInstance.get(
+      `${REST_PUBLIC_URI}/${url}/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_customer")}`,
+        },
+      }
+    );
+    return data;
+  };
+
+  // handle action
+  const handleInputAddress = async () => {
+    if (newAddress === "" || newName === "" || newSize === "") {
+      alert("Please fill all input in text input!");
+      return;
+    } else if (!/^\d+$/.test(newSize)) {
+      alert("Please enter a valid number for Size!");
+      return;
+    } else {
+      const newInputAddress = {
+        name: newName,
+        address: newAddress,
+        note: newNote,
+        house_size: Number(newSize),
+      };
+      const url = getEndpoint("customerAddress", "POST");
+      const { data } = await axiosInstance.post(
+        `${REST_PUBLIC_URI}/${url}/${uid}/addresses`,
+        newInputAddress,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("auth_customer")}`,
+          },
+        }
+      );
+      setFetchInfo(!fetchRow);
+      alert("ok");
+    }
+  };
+
+  const handleUpdateProfile = async () => {
+    if (
+      customerEmail === "" ||
+      customerPhone === "" ||
+      customerPassword === "" ||
+      customerName === ""
+    ) {
+      alert("Please fill all input in text input!");
+      return;
+    } else if (
+      !/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(customerEmail)
+    ) {
+      alert("Incorrect Email pattern!");
+      return;
+    } else {
+      const newInputInfo = {
+        email: customerEmail,
+        password: customerPassword,
+        phone: customerPhone,
+        name: customerName,
+      };
+      const url = getEndpoint("customer", "PUT");
+      const { data } = await axiosInstance.put(
+        `${REST_PUBLIC_URI}/${url}/${uid}`,
+        newInputInfo,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("auth_customer")}`,
+          },
+        }
+      );
+      setFetchRow(!fetchInfo);
+      alert("Edit success!");
+    }
+  };
+
+  // onChange Input for editting profile
+  const onChangeCustomerInfo = (name: string, value: string) => {
+    if (name === "Email") {
+      setCustomerEmail(value);
+    } else if (name === "Password") {
+      setCustomerPassword(value);
+    } else if (name === "Phone") {
+      setCustomerPhone(value);
+    } else {
+      setCustomerName(value);
+    }
+  };
+
+  // set Add Row
   const addRow = () => {
     setIsAdd(true);
     setNewAddress("");
@@ -114,38 +242,28 @@ export const AccountShow = () => {
     setIsAdd(false);
   };
 
-  const checkInput = () => {
-    console.log(newAddress, newName, newNote, newSize);
-  };
-
+  // UseEffect
   useEffect(() => {
-    const example: CustomerAddressType[] = [
-      {
-        address_id: "xxxxxx1",
-        customer_id: "xxxxx1",
-        address: "xxxx1",
-        name: "xxxx1",
-        note: "xxxx1",
-        house_size: "xxxx1",
-      },
-      {
-        address_id: "xxxxxx2",
-        customer_id: "xxxxx2",
-        address: "xxxx2",
-        name: "xxxx2",
-        note: "xxxx2",
-        house_size: "xxxx2",
-      },
-    ];
-    setRows(example);
-  }, []);
+    getAddressByCustomerId(uid).then((res) => {
+      console.log(res.results);
+      setRows(res.results);
+    });
+    getInfoByCustomerId(uid).then((res) => {
+      const info = res.results;
+      setCustomerEmail(info.email);
+      setCustomerPassword("");
+      setCustomerPhone(info.phone);
+      setCustomerName(info.name);
+      setLoading(false);
+    });
+  }, [uid, fetchRow, fetchInfo]);
 
   return (
     <div className="p-5 flex flex-col gap-5">
-      <Edit
+      <Show
+        title={<Typography variant="h5">Edit Customer</Typography>}
         goBack=""
         headerButtons={<></>}
-        saveButtonProps={saveButtonPropsHandler()}
       >
         <Box
           component="form"
@@ -153,78 +271,78 @@ export const AccountShow = () => {
           autoComplete="off"
         >
           <TextField
-            {...register("email", {
-              required: "This field is required",
-            })}
             required
-            error={!!(errors as any)?.email}
-            helperText={(errors as any)?.email?.message}
             fullWidth
             InputLabelProps={{ shrink: true }}
             type="text"
             label="email"
             name="email"
+            onChange={(e) => onChangeCustomerInfo("Email", e.target.value)}
+            value={customerEmail}
+            disabled={loading ? true : false}
           />
           <TextField
-            {...register("password", {
-              required: "This field is required",
-            })}
             required
-            error={!!(errors as any)?.password}
-            helperText={(errors as any)?.password?.message}
             fullWidth
             InputLabelProps={{ shrink: true }}
             type="password"
             label="password"
             name="password"
+            onChange={(e) => onChangeCustomerInfo("Password", e.target.value)}
+            value={customerPassword}
             inputProps={{ maxLength: 16 }}
+            disabled={loading ? true : false}
           />
           <TextField
-            {...register("phone", {
-              required: "This field is required",
-            })}
             required
-            error={!!(errors as any)?.phone}
-            helperText={(errors as any)?.phone?.message}
             fullWidth
             InputLabelProps={{ shrink: true }}
             type="text"
             label="phone"
             name="phone"
+            onChange={(e) => onChangeCustomerInfo("Phone", e.target.value)}
+            value={customerPhone}
+            disabled={loading ? true : false}
           />
           <TextField
-            {...register("name", {
-              required: "This field is required",
-            })}
             required
-            error={!!(errors as any)?.name}
-            helperText={(errors as any)?.name?.message}
             fullWidth
             InputLabelProps={{ shrink: true }}
             type="text"
             label="name"
             name="name"
+            onChange={(e) => onChangeCustomerInfo("Name", e.target.value)}
+            value={customerName}
+            disabled={loading ? true : false}
           />
+          <Button variant="contained" onClick={handleUpdateProfile}>
+            Edit
+          </Button>
         </Box>
-      </Edit>
+      </Show>
       <Show goBack="" title="Address INFO" headerButtons={<></>}>
         {isAdd ? (
           <div className="flex gap-5 justify-between">
             <Button variant="contained" color="error" onClick={close}>
               Cancel
             </Button>
-            <Button variant="contained" color="success" onClick={checkInput}>
+            <Button
+              variant="contained"
+              color="success"
+              onClick={handleInputAddress}
+            >
               Add
             </Button>
           </div>
         ) : (
           <Button variant="contained" onClick={addRow}>
-            Add Row
+            Add Address
           </Button>
         )}
         {isAdd && (
           <div className="flex flex-col justify-center items-center gap-5 flex-wrap mt-5 pt-5">
             <TextField
+              required
               type="text"
               label="Address"
               onChange={(e) => setNewAddress(e.target.value)}
@@ -232,6 +350,7 @@ export const AccountShow = () => {
             />
             <div className="flex justify-center gap-5 w-full">
               <TextField
+                required
                 type="text"
                 label="Name"
                 onChange={(e) => setNewName(e.target.value)}
@@ -244,6 +363,7 @@ export const AccountShow = () => {
                 className="w-1/3"
               />
               <TextField
+                required
                 type="text"
                 label="House Size"
                 onChange={(e) => setNewSize(e.target.value)}

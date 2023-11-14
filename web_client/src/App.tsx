@@ -83,19 +83,20 @@ function App() {
                 },
                 list: HomeShow,
               },
-              {
-                name: "hirings",
-                options: {
-                  label: "Hiring",
-                },
-                list: HiringCreate,
-              },
+              // {
+              //   name: "hirings",
+              //   options: {
+              //     label: "Hiring",
+              //   },
+              //   list: HiringCreate,
+              // },
               {
                 name: "appointments",
                 options: {
                   label: "My Appointment",
                 },
                 list: AppointmentList,
+                create: HiringCreate
               },
               {
                 name: "accounts",
