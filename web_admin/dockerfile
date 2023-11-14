@@ -10,6 +10,7 @@ WORKDIR /home/web
 
 ENV TZ=Asia/Bangkok
 ENV PORT=5003
+ENV PUBLIC_URL=/web-admin
 
 RUN apt-get update && apt-get install -y curl
 

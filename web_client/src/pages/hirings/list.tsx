@@ -62,8 +62,17 @@ interface IBaseJobResponse {
 const schema = Yup.object().shape({
   customer_id: Yup.string().required("This field is required"),
   address_id: Yup.string().required("This field is required"),
-  start_date_time: Yup.date().required("This field is required"),
-  end_date_time: Yup.date().required("This field is required"),
+  start_date_time: Yup.string()
+    .required("This field is required")
+    .transform((curr, orig) => {
+      // 2006-01-02T15:04:05Z07:00
+      return moment(curr).tz("Asia/Bangkok").format("YYYY-MM-DDTHH:mm:ssZ");
+    }),
+  end_date_time: Yup.string()
+    .required("This field is required")
+    .transform((curr, orig) => {
+      return moment(curr).tz("Asia/Bangkok").format("YYYY-MM-DDTHH:mm:ssZ");
+    }),
   hour: Yup.number().required("This field is required"),
   price: Yup.number().required("This field is required"),
   note: Yup.string().required("This field is required"),
@@ -145,6 +154,10 @@ export const HiringCreate = () => {
     return null;
   }, [watch, watch("start_date_time"), watch("hour")]);
 
+  useEffect(() => {
+    console.log("ERRORS", errors);
+  }
+  , [errors])
   const estimatedHour = useMemo(() => {
     // calculate hour for job and house size
     const hour = watch("to_do_list").reduce((acc, cur) => {
@@ -209,7 +222,17 @@ export const HiringCreate = () => {
 
   const selfHandleFinish = async () => {
     // onfinish
-    let response = await onFinish(watch());
+    // change date data into date format string
+    const data = {
+      ...watch(),
+      start_date_time: moment(watch("start_date_time"))
+        .tz("Asia/Bangkok")
+        .format("YYYY-MM-DDTHH:mm:ssZ"),
+      end_date_time: moment(watch("end_date_time"))
+        .tz("Asia/Bangkok")
+        .format("YYYY-MM-DDTHH:mm:ssZ"),
+    };
+    let response = await onFinish(data);
     console.log(response);
     setOpen(true);
   };

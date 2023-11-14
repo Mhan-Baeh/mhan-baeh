@@ -241,7 +241,7 @@ export const AppointmentShow: React.FC = () => {
                   )}
                 </FormControl>
                 <div className="py-2 flex items-center">
-                  {status === "DONE" || status === "CANCELLED" ? (
+                  {inputData?.status === "DONE" || status === "CANCELLED" ? (
                     <Button
                       onClick={handleStatusChange}
                       variant="contained"
