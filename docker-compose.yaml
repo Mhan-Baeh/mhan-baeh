@@ -176,7 +176,7 @@ services:
 
   # api-gateway ------------------------------------
   api-gateway:
-    image: champkub6/api-gateway:v1.0.0
+    image: champkub6/api-gateway:v1.7.0
     build:
       context: ./api-gateway
     ports:
@@ -196,6 +196,39 @@ services:
       ADMIN_UI: http://localhost:15000
       HOUSEKEEPER_UI: http://localhost:15000
       CUSTOMER_UI: http://localhost:15000,http://localhost:25000
+
+  # web-admin ------------------------------------
+  web-admin:
+    image: champkub6/web-admin:v1.0.0
+    build:
+      context: ./web_admin
+    ports:
+      - 5003:5003
+    environment:
+      PORT: 5003
+      REACT_APP_BACKEND_API: http://localhost:4000
+
+  # web-client ------------------------------------
+  web-client:
+    image: champkub6/web-client:v1.0.0
+    build:
+      context: ./web_client
+    ports:
+      - 5001:5001
+    environment:
+      PORT: 5001
+      REACT_APP_BACKEND_API: http://localhost:4000
+
+  # web-housekeeper ------------------------------------
+  web-housekeeper:
+    image: champkub6/web-housekeeper:v1.0.0
+    build:
+      context: ./web_housekeeper
+    ports:
+      - 5002:5002
+    environment:
+      PORT: 5002
+      REACT_APP_BACKEND_API: http://localhost:4000
 
 volumes:
   database-storage-admin:
