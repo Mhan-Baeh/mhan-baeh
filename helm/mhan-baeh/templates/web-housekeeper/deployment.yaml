@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-housekeeper-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-housekeeper-pod
+  template:
+    metadata:
+      labels:
+        app: web-housekeeper-pod
+    spec:
+      containers: 
+        - name: web-housekeeper
+          image: champkub6/web-housekeeper:v1.0.0
+          ports:
+            - containerPort: 5002
+          env:

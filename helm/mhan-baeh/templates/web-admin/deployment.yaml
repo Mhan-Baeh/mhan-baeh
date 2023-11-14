@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-admin-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-admin-pod
+  template:
+    metadata:
+      labels:
+        app: web-admin-pod
+    spec:
+      containers: 
+        - name: web-admin
+          image: champkub6/web-admin:v1.0.0
+          ports:
+            - containerPort: 5003
+          env:
