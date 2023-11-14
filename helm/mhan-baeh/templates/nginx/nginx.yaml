@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-gateway
+  labels:
+    app: nginx-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-gateway
+  template:
+    metadata:
+      labels:
+        app: nginx-gateway
+    spec:
+      containers:
+      - name: nginx-gateway
+        image: nginx:latest
+        volumeMounts:
+        - name: nginx-config
+          mountPath: /etc/nginx/conf.d
+        ports:
+        - containerPort: 80
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 25
+          periodSeconds: 3
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: nginx-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+data:
+  api.conf: |
+    server {
+      listen 80;
+      location /health {
+        return 200;
+      }
+      location /api {
+        rewrite ^/api/(.*) /$1 break;
+        proxy_pass http://api-gateway-service:3000;
+      }
+      location /web-admin {
+        rewrite ^/web-admin/(.*) /$1 break;
+        proxy_pass http://web-admin-service:5003;
+      }
+      location /web-client {
+        rewrite ^/web-client/(.*) /$1 break;
+        proxy_pass http://web-client-service:5001;
+      }
+      location /web-housekeeper {
+        rewrite ^/web-housekeeper/(.*) /$1 break;
+        proxy_pass http://web-housekeeper-service:5002;
+      }
+    }
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-gateway-service
+spec:
+  selector:
+    app: nginx-gateway
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 80

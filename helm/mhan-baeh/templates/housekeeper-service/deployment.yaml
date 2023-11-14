@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: housekeeper
-          image: champkub6/housekeeper-service:v2.0.0
+          image: champkub6/housekeeper-service:v3.0.0
           ports:
             - containerPort: 8003
             - containerPort: 18082

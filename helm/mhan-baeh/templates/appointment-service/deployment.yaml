@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: appointment
-          image: champkub6/appointment-service:v2.0.0
+          image: champkub6/appointment-service:v3.0.0
           ports:
             - containerPort: 8001
           env:

@@ -14,7 +14,8 @@ spec:
     spec:
       containers: 
         - name: web-housekeeper
-          image: champkub6/web-housekeeper:v2.0.0
+          image: natthaphons/web-housekeeper:5.0.0
           ports:
             - containerPort: 5002
           env:
+
