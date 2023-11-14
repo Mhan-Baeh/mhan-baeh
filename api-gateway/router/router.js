@@ -10,7 +10,7 @@ let allUiPath = process.env.ADMIN_UI + "," + process.env.CUSTOMER_UI + "," + pro
 
 const adminOpt = getCORSOption(process.env.ADMIN_UI.split(",") || "*")
 const customerOpt = getCORSOption(process.env.CUSTOMER_UI.split(",") || "*");
-const housekeeperOpt = getCORSOption(process.env.HOUSEKEEPER_UI.split(",") || "*");
+const housekeeperOpt = getCORSOption("*");
 const allOpt = getCORSOption(allUiPath.split(",") || "*");
 
 

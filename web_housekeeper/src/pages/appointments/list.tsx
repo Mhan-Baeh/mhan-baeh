@@ -91,7 +91,7 @@ export const AppointmentList = () => {
         type: "string",
         align: "center",
         headerAlign: "center",
-        minWidth: 150,
+        minWidth: 250,
         renderCell: function render({ value }) {
           const date = new Date(value);
           return date.toLocaleString();
@@ -105,7 +105,7 @@ export const AppointmentList = () => {
         type: "string",
         align: "center",
         headerAlign: "center",
-        minWidth: 150,
+        minWidth: 250,
         renderCell: function render({ value }) {
           const date = new Date(value);
           return date.toLocaleString();

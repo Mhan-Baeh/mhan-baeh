@@ -11,6 +11,7 @@ WORKDIR /home/web
 
 ENV TZ=Asia/Bangkok
 ENV PORT=5002
+ENV PUBLIC_URL=/web-housekeeper
 
 RUN apt-get update && apt-get install -y curl
 

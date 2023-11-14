@@ -1,7 +1,7 @@
 version: "3.9"
 
 services:
-  # # admin-service ------------------------------------
+  # admin-service ------------------------------------
   # admin_postgres:
   #   image: postgres:13
   #   restart: always
@@ -14,7 +14,7 @@ services:
   #   ports:
   #     - 5432:5432
   # admin_service:
-  #   image: champkub6/admin-service:v2.0.0
+  #   image: champkub6/admin-service:v1.0.0
   #   build:
   #     context: ./admin_service
   #   depends_on:
@@ -43,7 +43,7 @@ services:
   #   ports:
   #     - 5431:5432
   # customer_service:
-  #   image: champkub6/customer-service:v2.0.0
+  #   image: champkub6/customer-service:v1.0.0
   #   build:
   #     context: ./customer_service
   #   depends_on:
@@ -73,7 +73,7 @@ services:
   #   ports:
   #     - 5434:5432
   # housekeeper_service:
-  #   image: champkub6/housekeeper-service:v2.0.0
+  #   image: champkub6/housekeeper-service:v1.0.0
   #   build:
   #     context: ./housekeeper_service
   #   depends_on:
@@ -149,7 +149,7 @@ services:
   #     POSTGRES_DB: appointment_db
 
   # appointment_service:
-  #   image: champkub6/appointment-service:v2.0.0
+  #   image: champkub6/appointment-service:v1.1.0
   #   build:
   #     context: ./appointment_service
   #   depends_on:
@@ -174,9 +174,9 @@ services:
   #   ports:
   #     - 8081:8081
 
-  # # api-gateway ------------------------------------
+  # api-gateway ------------------------------------
   # api-gateway:
-  #   image: champkub6/api-gateway:v2.0.0
+  #   image: champkub6/api-gateway:v4.0.0
   #   build:
   #     context: ./api-gateway
   #   ports:
@@ -208,27 +208,27 @@ services:
       PORT: 5003
       REACT_APP_BACKEND_API: http://localhost:3000
 
-  # web-client ------------------------------------
-  web-client:
-    image: champkub6/web-client:v5.0.0
-    build:
-      context: ./web_client
-    ports:
-      - 5001:5001
-    environment:
-      PORT: 5001
-      REACT_APP_BACKEND_API: http://localhost:3000
+  # # web-client ------------------------------------
+  # web-client:
+  #   image: champkub6/web-client:v5.0.0
+  #   build:
+  #     context: ./web_client
+  #   ports:
+  #     - 5001:5001
+  #   environment:
+  #     PORT: 5001
+  #     REACT_APP_BACKEND_API: http://localhost:3000
 
   # # web-housekeeper ------------------------------------
-  web-housekeeper:
-    image: champkub6/web-housekeeper:v5.0.0
-    build:
-      context: ./web_housekeeper
-    ports:
-      - 5002:5002
-    environment:
-      PORT: 5002
-      REACT_APP_BACKEND_API: http://localhost:3000
+  # web-housekeeper:
+  #   image: champkub6/web-housekeeper:v5.0.0
+  #   build:
+  #     context: ./web_housekeeper
+  #   ports:
+  #     - 5002:5002
+  #   environment:
+  #     PORT: 5002
+  #     REACT_APP_BACKEND_API: http://localhost:3000
 
 volumes:
   database-storage-admin:
