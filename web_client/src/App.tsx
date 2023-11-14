@@ -25,6 +25,23 @@ import { AppointmentList } from "pages/appointments";
 import { HiringCreate } from "pages/hirings";
 import { AccountShow } from "pages/accounts";
 
+import axios, { AxiosRequestConfig } from "axios";
+
+const axiosInstance = axios.create();
+
+axiosInstance.interceptors.request.use((request: AxiosRequestConfig) => {
+  const token = localStorage.getItem("auth_customer");
+
+  if (request.headers) {
+    request.headers["Authorization"] = `Bearer ${token}`;
+  } else {
+    request.headers = {
+      Authorization: `Bearer ${token}`,
+    };
+  }
+  return request;
+});
+
 function App() {
   return (
     <StyledEngineProvider injectFirst>
@@ -36,7 +53,7 @@ function App() {
           <Refine
             LoginPage={AuthPage}
             authProvider={authProvider}
-            dataProvider={dataProvider(`${REST_PUBLIC_URI}`)}
+            dataProvider={dataProvider(`${REST_PUBLIC_URI}`, axiosInstance)}
             routerProvider={{
               ...routerProvider,
               routes: [
