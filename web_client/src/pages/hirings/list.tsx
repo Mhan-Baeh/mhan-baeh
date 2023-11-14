@@ -25,7 +25,7 @@ import { axiosInstance } from "@pankod/refine-simple-rest";
 import { REST_PUBLIC_URI } from "environment";
 import { getEndpoint } from "endpoints";
 import { parseJwt } from "utils";
-
+const moment = require("moment-timezone");
 interface IAddress {
   address_id: string;
   customer_id: string;
@@ -82,6 +82,9 @@ export const HiringCreate = () => {
       to_do_list: [],
       hour: 0,
       status: "BOOKED",
+      // set timezone to Thailand
+      start_date_time: moment().tz("Asia/Bangkok").format("YYYY-MM-DDTHH:mm"),
+      end_date_time: moment().tz("Asia/Bangkok").format("YYYY-MM-DDTHH:mm"),
     },
   });
 
@@ -118,6 +121,20 @@ export const HiringCreate = () => {
   const uid = parseJwt(localStorage.getItem("auth_customer") || "")["uuid"];
   const [addresses, setAddresses] = useState<IAddress[]>([]);
   const [jobs, setJobs] = useState<IJob[]>([]);
+  const endTime = useMemo(() => {
+    const startedAt = watch(`start_date_time`);
+    const hour = watch("hour");
+    if (!!startedAt && !!hour) {
+      const date = moment(startedAt)
+        .add(hour, "hours")
+        .format("YYYY-MM-DDTHH:mm");
+
+      console.log("date", date)
+      setValue("end_date_time", date, { shouldValidate: true })
+      return date;
+    }
+    return null;
+  } , [watch, watch("start_date_time"), watch("hour")])
 
   const estimatedHour = useMemo(() => {
     // calculate hour for job and house size
@@ -134,7 +151,7 @@ export const HiringCreate = () => {
         ?.house_size || 0;
     setValue("price", hour * houseSize, { shouldValidate: true });
     return hour * houseSize;
-  }, [addresses, jobs, watch, watch("address_id"), watch("to_do_list")]);
+  }, [addresses, jobs, watch, watch("address_id"), watch("to_do_list"), setValue]);
 
   const getAddressByCustomerId = async (
     id: string
@@ -174,18 +191,6 @@ export const HiringCreate = () => {
     });
   }, []);
 
-  const validateDateTimeRange = (value: string | Date) => {
-    const startedAt = watch(`start_date_time`);
-    const endedAt = value as string;
-    console.log("Check datetime")
-    console.log("startedAt", startedAt)
-    console.log("endedAt", endedAt)
-    if (startedAt && endedAt && endedAt < startedAt) {
-      return "Second datetime cannot be earlier than the first datetime";
-    }
-    return true;
-  };
-
   const saveButtonPropsHandler = () => {
     if (formLoading) {
       return {
@@ -199,7 +204,7 @@ export const HiringCreate = () => {
     if (watch("hour") < estimatedHour) {
       setValue("hour", estimatedHour, { shouldValidate: true })
     }
-  }, [estimatedHour, setValue])
+  }, [estimatedHour, setValue, watch])
   
 
   useEffect(() => {
@@ -353,8 +358,6 @@ export const HiringCreate = () => {
                 inputProps={{
                   ...register(`start_date_time` as const, {
                     required: true,
-                    setValueAs: (value) => new Date(value),
-                    validate: validateDateTimeRange,
                   }),
                 }}
                 error={!!(errors as any)?.start_date_time}
@@ -372,16 +375,8 @@ export const HiringCreate = () => {
                   shrink: true,
                 }}
                 fullWidth
-                inputProps={{
-                  ...register(`end_date_time` as const, {
-                    required: true,
-                    setValueAs: (value) => new Date(value),
-                    validate: validateDateTimeRange,
-                    onChange: (e) => {
-                      setValue("end_date_time", e.target.value, { shouldValidate: true })
-                    },
-                  }),
-                }}
+                value={endTime || watch("start_date_time")}
+                disabled
                 error={!!(errors as any)?.end_date_time}
                 type="datetime-local"
                 name="end_date_time"
