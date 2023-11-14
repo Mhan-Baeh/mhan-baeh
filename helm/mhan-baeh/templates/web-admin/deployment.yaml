@@ -14,7 +14,7 @@ spec:
     spec:
       containers: 
         - name: web-admin
-          image: champkub6/web-admin:v1.0.0
+          image: champkub6/web-admin:v2.0.0
           ports:
             - containerPort: 5003
           env:
