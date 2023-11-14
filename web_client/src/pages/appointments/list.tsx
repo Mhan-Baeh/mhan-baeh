@@ -108,12 +108,7 @@ export const AppointmentList = () => {
   );
   return (
     <div className="p-5">
-      <List title={
-        <div className="flex justify-between items-center">
-          <Typography variant="h5">Appointments</Typography>
-          <Link className="flex no-underline p-2 shadow-md rounded-md text-sm text-white bg-blue-700" to="/hirings">Create Appointment</Link>
-        </div>
-      }
+      <List
       >
         <DataGrid
           {...dataGridProps}
