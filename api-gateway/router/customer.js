@@ -20,7 +20,7 @@ router.post("/api/customers/:customerId/addresses", auth.protected(auth.admin, a
 router.get("/api/addresses/:addressId", auth.protected(auth.admin), auth.authorized([{role: "admin"}]), customerCtrl.get) // admin
 router.get("/api/addresses", auth.protected(auth.admin), auth.authorized([{role: "admin"}]), customerCtrl.get) // admin
 router.get("/api/addresses/customers/:customerId", auth.protected(auth.admin, auth.customer), auth.authorized([{role: "admin"}, {role: "customer", idParam: "customerId"}]), customerCtrl.get) // customer(self), admin
-router.delete("/api/addresses/:addressId", auth.protected(auth.admin, auth.customer), auth.authorized([{role: "admin"}, {role: "customer", idParam: "customerId"}]), customerCtrl.del) // customer(self), admin
+router.delete("/api/addresses/:addressId", auth.protected(auth.admin, auth.customer), auth.authorized([{role: "admin"}, {role: "customer"}]), customerCtrl.del) // customer(self), admin
 
 // health hidden
 router.get("/", customerCtrl.get)

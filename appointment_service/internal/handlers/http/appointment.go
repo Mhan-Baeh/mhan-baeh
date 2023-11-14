@@ -37,6 +37,14 @@ func (h *AppointmentHandler) CreateAppointment(c *gin.Context) {
 
 	err = h.service.CreateAppointment(c, &appointment)
 	if err != nil {
+
+		// init empty row for cancelled appointment
+		err = h.service.CreateCancelledAppointment(&appointment)
+		if err != nil {
+			c.JSON(500, gin.H{"error": err.Error()})
+			return
+		}
+
 		c.JSON(500, gin.H{"error": err.Error()})
 		return
 	}
