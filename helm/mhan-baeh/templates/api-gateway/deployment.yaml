@@ -14,7 +14,7 @@ spec:
     spec:
       containers: 
         - name: api-gateway
-          image: champkub6/api-gateway:v2.0.0
+          image: champkub6/api-gateway:v4.0.0
           ports:
             - containerPort: 3000
           env:
@@ -39,8 +39,8 @@ spec:
             - name: KAFKA_HOST
               value: kafka-service:9092
             - name: CUSTOMER_UI
-              value: http://localhost:5001
+              value: http://localhost:5001,http://a80522e8e4d8b4220875a6beaed61a73-1241861906.ap-southeast-1.elb.amazonaws.com
             - name: HOUSEKEEPER_UI
-              value: http://localhost:5002
+              value: http://localhost:5002,http://a80522e8e4d8b4220875a6beaed61a73-1241861906.ap-southeast-1.elb.amazonaws.com
             - name: ADMIN_UI
-              value: http://localhost:5003
+              value: http://localhost:5003,http://a80522e8e4d8b4220875a6beaed61a73-1241861906.ap-southeast-1.elb.amazonaws.com

@@ -14,7 +14,8 @@ spec:
     spec:
       containers: 
         - name: web-client
-          image: champkub6/web-client:v2.0.0
+          image: natthaphons/web-client:v5.0.0
           ports:
             - containerPort: 5001
           env:
+

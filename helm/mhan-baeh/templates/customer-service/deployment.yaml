@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: customer
-          image: champkub6/customer-service:v2.0.0
+          image: champkub6/customer-service:v3.0.0
           ports:
             - containerPort: 8002
             - containerPort: 18081
