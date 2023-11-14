@@ -15,6 +15,10 @@ type PutMapType = {
   customer: string;
 };
 
+type PatchMapType = {
+  appointments: string;
+};
+
 type DeleteMapType = {
   address: string;
 };
@@ -36,6 +40,10 @@ export const putMap: PutMapType = {
   customer: "customer-api/api/customers",
 };
 
+export const patchMap: PatchMapType = {
+  appointments: "appointment-api/http/appointments",
+};
+
 export const deleteMap: DeleteMapType = {
   address: "customer-api/api/addresses",
 };
@@ -55,6 +63,11 @@ export const getEndpoint = (resource: string, method: string): string => {
     case "PUT":
       if (resource in putMap) {
         return putMap[resource as keyof PutMapType];
+      }
+      break;
+    case "PATCH":
+      if (resource in patchMap) {
+        return patchMap[resource as keyof PatchMapType];
       }
       break;
     case "DELETE":

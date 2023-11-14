@@ -109,7 +109,7 @@ const dataProvider = (
   },
 
   deleteOne: async ({ resource, id, variables }) => {
-    const url = `${apiUrl}/${getEndpoint(resource, "DELETE")}/${id}`;
+    const url = `${apiUrl}/${getEndpoint(resource, "PATCH")}/${id}`;
 
     const { data } = await httpClient.patch(url, { status: "CANCELLED" });
 
