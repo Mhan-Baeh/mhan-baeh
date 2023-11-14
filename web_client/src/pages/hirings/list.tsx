@@ -11,6 +11,19 @@ import MenuItem from "@mui/material/MenuItem";
 import FormHelperText from "@mui/material/FormHelperText";
 import FormControl from "@mui/material/FormControl";
 import { Typography } from "@pankod/refine-mui";
+import { useMemo } from "react";
+import { axiosInstance } from "@pankod/refine-simple-rest";
+import { REST_PUBLIC_URI } from "environment";
+import { getEndpoint } from "endpoints";
+
+interface IAddress {
+  id: string;
+  name: string;
+  address: string;
+  note: string;
+  house_size: number;
+}
+
 
 const schema = Yup.object().shape({
   appointment_id: Yup.string().nullable(),
@@ -123,6 +136,21 @@ export const HiringCreate = () => {
     "Virginia Andrews",
     "Kelly Snyder",
   ];
+
+  const getAddressByCustomerId = async (id: string) => {
+    const url = getEndpoint("customerAddress", "GET");
+    const { data } = await axiosInstance.get(`${REST_PUBLIC_URI}/${url}/${id}`)
+    if (data) {
+      return data;
+    }
+  }
+
+  // const addresses: IAddress[] = useMemo(() => {
+  //   if (watch("customer_id")) {
+  //     getAddressByCustomerId(watch("customer_id"));
+  //   }
+  //   return [];
+  // }, []);
 
   return (
     <Create>

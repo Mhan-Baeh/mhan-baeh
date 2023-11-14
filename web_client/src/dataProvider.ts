@@ -6,16 +6,7 @@ import {
   generateSort,
   axiosInstance,
 } from "@pankod/refine-simple-rest";
-
-const urlGetManyMap = {
-  appointments: "appointment-api/http/appointments",
-  housekeepers: "housekeeper-api/housekeepers",
-};
-
-const urlPostCreateMap = {
-  housekeepers: "housekeeper-api/housekeeper",
-};
-
+import { getEndpoint } from "endpoints";
 const dataProvider = (
   apiUrl: string,
   httpClient: AxiosInstance = axiosInstance
@@ -30,10 +21,8 @@ const dataProvider = (
     filters,
     sort,
   }) => {
-    let url = `${apiUrl}/`;
-    if (resource === "appointments") {
-      url += urlGetManyMap.appointments;
-    }
+    let url = `${apiUrl}/${getEndpoint(resource, "GET")}`;
+
 
     const { current = 1, pageSize = 10 } = pagination ?? {};
 
@@ -80,7 +69,7 @@ const dataProvider = (
   },
 
   create: async ({ resource, variables }) => {
-    const url = `${apiUrl}/${resource}`;
+    const url = `${apiUrl}/${getEndpoint(resource, "POST")}`;
 
     const { data } = await httpClient.post(url, variables);
 
@@ -90,7 +79,7 @@ const dataProvider = (
   },
 
   update: async ({ resource, id, variables }) => {
-    const url = `${apiUrl}/${resource}`;
+    const url = `${apiUrl}/${getEndpoint(resource, "PUT")}`;
     if (resource.endsWith("s")) {
       resource = resource.slice(0, -1);
     }
@@ -105,7 +94,7 @@ const dataProvider = (
   },
 
   getOne: async ({ resource, id }) => {
-    const url = `${apiUrl}/${resource}/${id}`;
+    const url = `${apiUrl}/${getEndpoint(resource,"GET")}/${id}`;
 
     const { data } = await httpClient.get(url);
 
@@ -121,7 +110,7 @@ const dataProvider = (
   },
 
   deleteOne: async ({ resource, id, variables }) => {
-    const url = `${apiUrl}/${resource}/${id}`;
+    const url = `${apiUrl}/${getEndpoint(resource,"DELETE")}/${id}`;
 
     const { data } = await httpClient.delete(url, {
       data: variables,
