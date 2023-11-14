@@ -7,7 +7,14 @@ import {
   ListItemText,
   TextField,
   TextareaAutosize,
-  NumberField
+  NumberField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
+  CircularProgress,
 } from "@pankod/refine-mui";
 import { useForm } from "@pankod/refine-react-hook-form";
 import * as Yup from "yup";
@@ -24,8 +31,10 @@ import { useEffect, useMemo, useState } from "react";
 import { axiosInstance } from "@pankod/refine-simple-rest";
 import { REST_PUBLIC_URI } from "environment";
 import { getEndpoint } from "endpoints";
+import { useModal } from "@pankod/refine-core";
 import { parseJwt } from "utils";
 
+const moment = require("moment-timezone");
 interface IAddress {
   address_id: string;
   customer_id: string;
@@ -53,14 +62,10 @@ interface IBaseJobResponse {
 const schema = Yup.object().shape({
   customer_id: Yup.string().required("This field is required"),
   address_id: Yup.string().required("This field is required"),
-  start_date_time: Yup.date()
-    .required("This field is required"),
-  end_date_time: Yup.date()
-    .required("This field is required"),
-  hour: Yup.number()
-    .required("This field is required"),
-  price: Yup.number()
-    .required("This field is required"),
+  start_date_time: Yup.date().required("This field is required"),
+  end_date_time: Yup.date().required("This field is required"),
+  hour: Yup.number().required("This field is required"),
+  price: Yup.number().required("This field is required"),
   note: Yup.string().required("This field is required"),
   to_do_list: Yup.array()
     .of(Yup.string().required("Please select at least one to do list"))
@@ -70,10 +75,12 @@ const schema = Yup.object().shape({
 export const HiringCreate = () => {
   const {
     saveButtonProps,
-    refineCore: { formLoading },
+    refineCore: { formLoading, onFinish },
     register,
+    handleSubmit,
     setValue,
     watch,
+
     formState: { errors },
   } = useForm<any, any, AppointmentFormDataType>({
     resolver: yupResolver(schema),
@@ -82,12 +89,17 @@ export const HiringCreate = () => {
       to_do_list: [],
       hour: 0,
       status: "BOOKED",
+      // set timezone to Thailand
+      start_date_time: moment().tz("Asia/Bangkok").format("YYYY-MM-DDTHH:mm"),
+      end_date_time: moment().tz("Asia/Bangkok").format("YYYY-MM-DDTHH:mm"),
+    },
+    refineCoreProps: {
+      redirect: false,
     },
   });
-
   const handleLocChange = (event: SelectChangeEvent) => {
     console.log("address_id", event.target.value);
-    setValue("address_id", event.target.value, {shouldValidate: true});
+    setValue("address_id", event.target.value, { shouldValidate: true });
   };
 
   const handleJobsChange = (event: SelectChangeEvent<string[]>) => {
@@ -118,6 +130,20 @@ export const HiringCreate = () => {
   const uid = parseJwt(localStorage.getItem("auth_customer") || "")["uuid"];
   const [addresses, setAddresses] = useState<IAddress[]>([]);
   const [jobs, setJobs] = useState<IJob[]>([]);
+  const endTime = useMemo(() => {
+    const startedAt = watch(`start_date_time`);
+    const hour = watch("hour");
+    if (!!startedAt && !!hour) {
+      const date = moment(startedAt)
+        .add(hour, "hours")
+        .format("YYYY-MM-DDTHH:mm");
+
+      console.log("date", date);
+      setValue("end_date_time", date, { shouldValidate: true });
+      return date;
+    }
+    return null;
+  }, [watch, watch("start_date_time"), watch("hour")]);
 
   const estimatedHour = useMemo(() => {
     // calculate hour for job and house size
@@ -134,7 +160,14 @@ export const HiringCreate = () => {
         ?.house_size || 0;
     setValue("price", hour * houseSize, { shouldValidate: true });
     return hour * houseSize;
-  }, [addresses, jobs, watch, watch("address_id"), watch("to_do_list")]);
+  }, [
+    addresses,
+    jobs,
+    watch,
+    watch("address_id"),
+    watch("to_do_list"),
+    setValue,
+  ]);
 
   const getAddressByCustomerId = async (
     id: string
@@ -162,7 +195,7 @@ export const HiringCreate = () => {
   };
 
   useEffect(() => {
-    setValue("customer_id", uid );
+    setValue("customer_id", uid);
     getAddressByCustomerId(uid).then((res) => {
       setAddresses(res.results);
     });
@@ -174,38 +207,41 @@ export const HiringCreate = () => {
     });
   }, []);
 
-  const validateDateTimeRange = (value: string | Date) => {
-    const startedAt = watch(`start_date_time`);
-    const endedAt = value as string;
-    console.log("Check datetime")
-    console.log("startedAt", startedAt)
-    console.log("endedAt", endedAt)
-    if (startedAt && endedAt && endedAt < startedAt) {
-      return "Second datetime cannot be earlier than the first datetime";
-    }
-    return true;
+  const selfHandleFinish = async () => {
+    // onfinish
+    let response = await onFinish(watch());
+    console.log(response);
+    setOpen(true);
   };
 
   const saveButtonPropsHandler = () => {
-    if (formLoading) {
-      return {
-        ...saveButtonProps,
-        disabled: true,
-      };
-    }
-    return saveButtonProps;
+    return {
+      ...saveButtonProps,
+      onClick: handleSubmit(selfHandleFinish),
+    };
   };
   useEffect(() => {
     if (watch("hour") < estimatedHour) {
-      setValue("hour", estimatedHour, { shouldValidate: true })
+      setValue("hour", estimatedHour, { shouldValidate: true });
     }
-  }, [estimatedHour, setValue])
-  
+  }, [estimatedHour, setValue, watch]);
 
   useEffect(() => {
     console.log("error", errors);
     console.log("watch", watch());
-  },[])
+  }, []);
+
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    window.location.href = "/appointments";
+  };
+
   return (
     <div className="p-5">
       <Create saveButtonProps={saveButtonPropsHandler()}>
@@ -325,15 +361,17 @@ export const HiringCreate = () => {
                   return true;
                 },
                 onChange: (e) => {
-                  setValue("hour", Number(e.target.value), { shouldValidate: true })
+                  setValue("hour", Number(e.target.value), {
+                    shouldValidate: true,
+                  });
                 },
                 onBlur: (e) => {
                   let val = Number(e.target.value);
-                  setValue("hour", val < estimatedHour ? estimatedHour: val, { shouldValidate: true })
-                }
-               
+                  setValue("hour", val < estimatedHour ? estimatedHour : val, {
+                    shouldValidate: true,
+                  });
+                },
               })}
-              
               className="w-full pr-3"
               type="number"
               error={!!errors.hour}
@@ -353,8 +391,6 @@ export const HiringCreate = () => {
                 inputProps={{
                   ...register(`start_date_time` as const, {
                     required: true,
-                    setValueAs: (value) => new Date(value),
-                    validate: validateDateTimeRange,
                   }),
                 }}
                 error={!!(errors as any)?.start_date_time}
@@ -372,16 +408,8 @@ export const HiringCreate = () => {
                   shrink: true,
                 }}
                 fullWidth
-                inputProps={{
-                  ...register(`end_date_time` as const, {
-                    required: true,
-                    setValueAs: (value) => new Date(value),
-                    validate: validateDateTimeRange,
-                    onChange: (e) => {
-                      setValue("end_date_time", e.target.value, { shouldValidate: true })
-                    },
-                  }),
-                }}
+                value={endTime || watch("start_date_time")}
+                disabled
                 error={!!(errors as any)?.end_date_time}
                 type="datetime-local"
                 name="end_date_time"
@@ -404,6 +432,32 @@ export const HiringCreate = () => {
           </div>
         </Box>
       </Create>
+      <Dialog
+        open={open}
+        // onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"The request has been sent successfully"}
+        </DialogTitle>
+        <DialogContent>
+          <hr/>
+          <DialogContentText id="alert-dialog-description">
+            <div className="flex flex-col items-center">
+              <Typography variant="h6" color="gray-500">
+                Please wait for the system to confirm the request.
+              </Typography>
+              <Typography variant="caption" className="mt-2" color="gray-500">
+                If the system does not respond within 5 minutes, please contact
+              </Typography>
+            </div>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>OK</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

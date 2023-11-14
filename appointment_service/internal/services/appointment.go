@@ -143,6 +143,20 @@ func (s *AppointmentService) GetAllAppointment() ([]*schema.AppointmentReturnTyp
 func (s *AppointmentService) CreateAppointment(c context.Context, appointment *schema.AppointmentRequestType) error {
 	// business checking logic
 
+	//validate price and hour
+	if appointment.Price == 0 || appointment.Hour == 0 {
+		return errors.New("invalid price or hour")
+	}
+
+	// validate start time and end time
+	if appointment.StartDateTime.After(appointment.EndDateTime) {
+		return errors.New("invalid start time or end time")
+	}
+
+	// validate to do list
+	if len(appointment.ToDoList) == 0 {
+		return errors.New("invalid to do list")
+	}
 	
 	// check valid customer by grpc call to customer service
 	customerClient := pb.NewCustomerServiceClient(s.csClient)
@@ -369,4 +383,22 @@ func (s *AppointmentService) GetAppointmentById(id string) (*schema.AppointmentR
 		Job: jobsArr,
 	}
 	return appointmentReturn, nil
+}
+
+
+
+func (s *AppointmentService) CreateCancelledAppointment(appointment *schema.AppointmentRequestType) (error) {
+	// just simply insert into postgres
+	return s.appointmentRepo.CreateAppointment(&postgresModel.Appointment{
+		CustomerId:    uuidGofr.UUID(appointment.CustomerId),
+		HousekeeperId: uuidGofr.Nil,
+		AddressId:     uuidGofr.UUID(appointment.AddressId),
+		StartDateTime: appointment.StartDateTime,
+		EndDateTime:   appointment.EndDateTime,
+		Hour:          appointment.Hour,
+		Price:         0,
+		Status:        postgresModel.AppointmentStatus("CANCELLED"),
+		Note:          appointment.Note,
+		ToDoList:      appointment.ToDoList,
+	})
 }

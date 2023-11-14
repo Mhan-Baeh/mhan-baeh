@@ -53,7 +53,12 @@ const RowShow = (
         },
       }
     );
-    alert("ok");
+
+    if (data) {
+      alert("ok");
+    }
+    window.location.reload();
+  
   };
 
   return (
