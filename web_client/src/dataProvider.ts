@@ -7,6 +7,15 @@ import {
   axiosInstance,
 } from "@pankod/refine-simple-rest";
 
+const urlGetManyMap = {
+  appointments: "appointment-api/http/appointments",
+  housekeepers: "housekeeper-api/housekeepers",
+};
+
+const urlPostCreateMap = {
+  housekeepers: "housekeeper-api/housekeeper",
+};
+
 const dataProvider = (
   apiUrl: string,
   httpClient: AxiosInstance = axiosInstance
@@ -21,7 +30,10 @@ const dataProvider = (
     filters,
     sort,
   }) => {
-    const url = `${apiUrl}/${resource}/`;
+    let url = `${apiUrl}/`;
+    if (resource === "appointments") {
+      url += urlGetManyMap.appointments;
+    }
 
     const { current = 1, pageSize = 10 } = pagination ?? {};
 
@@ -50,9 +62,9 @@ const dataProvider = (
       `${url}?${stringify(query)}&${stringify(queryFilters)}`
     );
 
-    const total = data.data?.total;
+    const total = data.data?.length;
     return {
-      data: data?.data.items,
+      data: data?.data,
       total,
     };
   },
@@ -82,7 +94,10 @@ const dataProvider = (
     if (resource.endsWith("s")) {
       resource = resource.slice(0, -1);
     }
-    const { data } = await httpClient.put(url, { ...variables, [`${resource}_uuid`]:id });
+    const { data } = await httpClient.put(url, {
+      ...variables,
+      [`${resource}_uuid`]: id,
+    });
 
     return {
       data,
@@ -94,7 +109,7 @@ const dataProvider = (
 
     const { data } = await httpClient.get(url);
 
-    if (!!data?.status_code &&!!data?.data) {
+    if (!!data?.status_code && !!data?.data) {
       return {
         data: data?.data,
       };

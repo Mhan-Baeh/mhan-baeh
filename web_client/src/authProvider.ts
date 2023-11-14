@@ -11,15 +11,14 @@ const authProvider: AuthProvider = {
         password,
       }
     );
-
-    if (response.status >= 200 && response.status <= 300) {
-      localStorage.setItem("auth", JSON.stringify(response.data));
+    if (response.status >= 200 && response.status < 300) {
+      localStorage.setItem("auth_customer", response.data.access_token);
       return Promise.resolve("/");
     }
 
     return Promise.reject("/");
   },
-  register: async({email, name, phone, password, confirmPassword}) =>{
+  register: async ({ email, name, phone, password, confirmPassword }) => {
     const response = await axiosInstance.post(
       `${REST_PUBLIC_URI}/customer-api/api/register`,
       {
@@ -30,14 +29,13 @@ const authProvider: AuthProvider = {
         confirmPassword,
       }
     );
-    if (response.status >= 200 && response.status <= 300) {
+    if (response.status >= 200 && response.status < 300) {
       return Promise.resolve("/");
     }
     return Promise.reject("/");
-    
   },
   checkAuth: () => {
-    const user = localStorage.getItem("auth");
+    const user = localStorage.getItem("auth_customer");
 
     if (user) {
       return Promise.resolve("/");
@@ -46,14 +44,14 @@ const authProvider: AuthProvider = {
     return Promise.reject("/");
   },
   logout: async () => {
-      localStorage.removeItem("auth");
+    localStorage.removeItem("auth_customer");
   },
   getPermissions: function (params?: any): Promise<any> {
     throw new Error("Function not implemented.");
   },
   checkError: function (error: any): Promise<void> {
     if (error.statusCode === 401) {
-      localStorage.removeItem("auth");
+      localStorage.removeItem("auth_customer");
       return Promise.reject("/");
     }
     return Promise.resolve();
