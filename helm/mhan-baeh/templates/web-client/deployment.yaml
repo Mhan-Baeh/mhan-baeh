@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-client-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-client-pod
+  template:
+    metadata:
+      labels:
+        app: web-client-pod
+    spec:
+      containers: 
+        - name: web-client
+          image: champkub6/web-client:v1.0.0
+          ports:
+            - containerPort: 5001
+          env:

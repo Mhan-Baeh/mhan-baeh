@@ -3,3 +3,12 @@
 #   auth:
 #     enabled: true
 #     rootPassword: password
+
+# loki:
+#   enabled: true
+#   persistent:
+#     enabled: true
+#     storageClassName: "standard"
+#     size: 1Gi
+# grafana:
+#   enabled: true

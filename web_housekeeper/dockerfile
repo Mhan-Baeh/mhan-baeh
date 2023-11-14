@@ -2,14 +2,14 @@ FROM node:20.8-slim
 
 ARG REACT_APP_BACKEND_API
 
-ENV REACT_APP_BACKEND_API=$REACT_APP_BACKEND_API
+ENV REACT_APP_BACKEND_API=http://a80522e8e4d8b4220875a6beaed61a73-1241861906.ap-southeast-1.elb.amazonaws.com/api
 
 ADD . /home/web
 
 WORKDIR /home/web
 
 ENV TZ=Asia/Bangkok
-ENV PORT=3000
+ENV PORT=5002
 
 RUN apt-get update && apt-get install -y curl
 
@@ -21,6 +21,6 @@ RUN npm run build
 
 RUN npm install -g serve
 
-EXPOSE 3000
+EXPOSE 5002
 
 CMD serve -s build
