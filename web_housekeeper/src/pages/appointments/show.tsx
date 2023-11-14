@@ -15,7 +15,7 @@ import { useShow } from "@pankod/refine-core";
 import { axiosInstance } from "@pankod/refine-simple-rest";
 import { REST_PUBLIC_URI } from "environment";
 
-type StatusEnum = "BOOKED" | "CLEANING" | "DONE";
+type StatusEnum = "BOOKED" | "CLEANING" | "DONE" | "CANCELLED";
 
 interface AddressDataType {
   address_id: string;
@@ -214,7 +214,7 @@ export const AppointmentShow: React.FC = () => {
                       <MenuItem value={"CLEANING"}>CLEANING</MenuItem>
                       <MenuItem value={"DONE"}>DONE</MenuItem>
                     </Select>
-                  ) : (
+                  ) : allData?.status === "DONE" ? (
                     <Select
                       labelId="demo-simple-select-label"
                       id="demo-simple-select"
@@ -226,10 +226,22 @@ export const AppointmentShow: React.FC = () => {
                         DONE
                       </MenuItem>
                     </Select>
+                  ) : (
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      value={status}
+                      onChange={handleChange}
+                      disabled
+                    >
+                      <MenuItem value={"CANCELLED"} selected>
+                        CANCEL
+                      </MenuItem>
+                    </Select>
                   )}
                 </FormControl>
                 <div className="py-2 flex items-center">
-                  {status === "DONE" ? (
+                  {status === "DONE" || status === "CANCELLED" ? (
                     <Button
                       onClick={handleStatusChange}
                       variant="contained"

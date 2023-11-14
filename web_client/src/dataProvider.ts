@@ -23,7 +23,6 @@ const dataProvider = (
   }) => {
     let url = `${apiUrl}/${getEndpoint(resource, "GET")}`;
 
-
     const { current = 1, pageSize = 10 } = pagination ?? {};
 
     const queryFilters = generateFilter(filters);
@@ -94,7 +93,7 @@ const dataProvider = (
   },
 
   getOne: async ({ resource, id }) => {
-    const url = `${apiUrl}/${getEndpoint(resource,"GET")}/${id}`;
+    const url = `${apiUrl}/${getEndpoint(resource, "GET")}/${id}`;
 
     const { data } = await httpClient.get(url);
 
@@ -110,11 +109,9 @@ const dataProvider = (
   },
 
   deleteOne: async ({ resource, id, variables }) => {
-    const url = `${apiUrl}/${getEndpoint(resource,"DELETE")}/${id}`;
+    const url = `${apiUrl}/${getEndpoint(resource, "PATCH")}/${id}`;
 
-    const { data } = await httpClient.delete(url, {
-      data: variables,
-    });
+    const { data } = await httpClient.patch(url, { status: "CANCELLED" });
 
     return {
       data,

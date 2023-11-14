@@ -8,7 +8,11 @@ import {
   Typography,
 } from "@pankod/refine-mui";
 
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
+
+const handleCancelAppointment = (id: string) => {
+  alert("Cancel Appointment");
+};
 
 export const AppointmentList = () => {
   const { dataGridProps } = useDataGrid({ queryOptions: { retry: false } });
@@ -16,18 +20,24 @@ export const AppointmentList = () => {
   const columns = React.useMemo<GridColumns<any>>(
     () => [
       {
-        field: "name",
-        headerName: "Housekeeper name",
+        field: "HousekeeperName",
+        headerName: "Housekeeper Name",
         type: "number",
         align: "center",
+        renderCell: function render({ row }) {
+          return row.housekeeper.name;
+        },
         headerAlign: "center",
         minWidth: 200,
       },
       {
-        field: "phone",
+        field: "HousekeeperPhone",
         headerName: "Phone Number",
         type: "string",
         align: "center",
+        renderCell: function render({ row }) {
+          return row.housekeeper.phone;
+        },
         headerAlign: "center",
         minWidth: 150,
       },
@@ -52,6 +62,9 @@ export const AppointmentList = () => {
         headerName: "Address",
         type: "string",
         align: "center",
+        renderCell: function render({ row }) {
+          return row.address.address;
+        },
         headerAlign: "center",
         minWidth: 300,
       },
@@ -93,7 +106,9 @@ export const AppointmentList = () => {
         renderCell: function render({ row }) {
           return (
             <>
-              <DeleteButton hideText recordItemId={row.appointment_id} />
+              {row.status !== "CANCELLED" && row.status !== "DONE" && (
+                <DeleteButton hideText recordItemId={row.appointment_id} />
+              )}
             </>
           );
         },
@@ -108,8 +123,7 @@ export const AppointmentList = () => {
   );
   return (
     <div className="p-5">
-      <List
-      >
+      <List>
         <DataGrid
           {...dataGridProps}
           getRowId={(row) => row.appointment_id}

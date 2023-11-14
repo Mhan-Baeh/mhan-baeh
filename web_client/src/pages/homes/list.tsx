@@ -46,7 +46,7 @@ export const HomeShow = () => {
       <div className="p-5 bg-white">
         <div className="flex flex-col items-center md:flex-row md:justify-center gap-5 md:gap-40 mt-5">
           <Link
-            to="/hirings"
+            to="/appointments/create"
             className="flex w-2/3 md:w-1/3 justify-center no-underline rounded-md shadow-md py-3 text-2xl"
             style={{ backgroundColor: "#D9EEFF", color: "#142880" }}
           >
