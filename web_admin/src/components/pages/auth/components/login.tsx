@@ -111,10 +111,7 @@ export const LoginPage: React.FC<LoginProps> = ({
           })}
         >
           {renderProviders()}
-          <Typography
-            color="black"
-            className="p-0"
-          >
+          <Typography color="black" className="p-0">
             Email
           </Typography>
           <TextField
@@ -137,10 +134,7 @@ export const LoginPage: React.FC<LoginProps> = ({
             }}
             className="shadow-md"
           />
-          <Typography
-            color="black"
-            className="mt-3"
-          >
+          <Typography color="black" className="mt-3">
             Password
           </Typography>
           <TextField
@@ -172,8 +166,7 @@ export const LoginPage: React.FC<LoginProps> = ({
               alignItems: "center",
             }}
           ></Box>
-          <div className="flex justify-between mt-3 mb-5">
-          </div>
+          <div className="flex justify-between mt-3 mb-5"></div>
           <Button
             type="submit"
             fullWidth
@@ -181,8 +174,8 @@ export const LoginPage: React.FC<LoginProps> = ({
             color="error"
             sx={{
               my: "8px",
-              p:"8px",
-              backgroundColor: "#DC2434"
+              p: "8px",
+              backgroundColor: "#DC2434",
             }}
             disabled={isLoading}
           >
@@ -217,7 +210,11 @@ export const LoginPage: React.FC<LoginProps> = ({
             }}
           >
             <div className="flex justify-center">
-              <img className="w-11/12" src="mhanbae.png" alt="mhanbae" />
+              <img
+                className="w-11/12"
+                src="https://media.discordapp.net/attachments/1150062586025476206/1174171541299277834/mhanbae.png?ex=65669f76&is=65542a76&hm=3bbc64481150e3451dea2e5240e041df612c3d6ce52529611e8b410f50d46df2&=&width=1454&height=278"
+                alt="mhanbae"
+              />
             </div>
             {renderContent ? renderContent(Content) : Content}
           </Box>

@@ -4,7 +4,7 @@ export const HomeShow = () => {
   return (
     <div
       style={{
-        backgroundImage: `url(/home.png)`,
+        backgroundImage: `url("https://media.discordapp.net/attachments/1150062586025476206/1174171540884037682/home.png?ex=65669f76&is=65542a76&hm=052330fdd37c8cb57100ac9cd69e11f49400de28a241de108522defbddfa243f&=&width=2160&height=800")`,
         width: "100%",
         height: "30rem",
         backgroundRepeat: "no-repeat",

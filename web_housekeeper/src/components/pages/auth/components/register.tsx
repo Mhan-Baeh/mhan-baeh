@@ -8,7 +8,7 @@ import {
   useRouterContext,
   useRegister,
 } from "@pankod/refine-core";
-import {RegisterFormTypes} from "../../../../interfaces/auth"
+import { RegisterFormTypes } from "../../../../interfaces/auth";
 import {
   Button,
   TextField,
@@ -92,7 +92,10 @@ export const RegisterPage: React.FC<RegisterProps> = ({
   };
 
   const Content = (
-    <Card className="w-full py-3 rounded-2xl shadow-xl px-8 sm:px-16" {...(contentProps ?? {})}>
+    <Card
+      className="w-full py-3 rounded-2xl shadow-xl px-8 sm:px-16"
+      {...(contentProps ?? {})}
+    >
       <div className="flex flex-col">
         <Typography
           component="h1"
@@ -113,11 +116,7 @@ export const RegisterPage: React.FC<RegisterProps> = ({
             return registerMutate(data);
           })}
         >
-          <Typography
-            color="black"
-          >
-            Email
-          </Typography>
+          <Typography color="black">Email</Typography>
           <TextField
             {...register("email", {
               required: true,
@@ -145,10 +144,7 @@ export const RegisterPage: React.FC<RegisterProps> = ({
             }}
             className="shadow-md"
           />
-          <Typography
-            color="black"
-            className="mt-3"
-          >
+          <Typography color="black" className="mt-3">
             Name
           </Typography>
           <TextField
@@ -171,10 +167,7 @@ export const RegisterPage: React.FC<RegisterProps> = ({
             }}
             className="shadow-md"
           />
-          <Typography
-            color="black"
-            className="mt-3"
-          >
+          <Typography color="black" className="mt-3">
             Phone
           </Typography>
           <TextField
@@ -201,10 +194,7 @@ export const RegisterPage: React.FC<RegisterProps> = ({
             }}
             className="shadow-md"
           />
-          <Typography
-            color="black"
-            className="mt-3"
-          >
+          <Typography color="black" className="mt-3">
             Password
           </Typography>
           <TextField
@@ -228,10 +218,7 @@ export const RegisterPage: React.FC<RegisterProps> = ({
             }}
             className="shadow-md"
           />
-          <Typography
-            color="black"
-            className="mt-3"
-          >
+          <Typography color="black" className="mt-3">
             Confirm Password
           </Typography>
           <TextField
@@ -241,7 +228,9 @@ export const RegisterPage: React.FC<RegisterProps> = ({
             id="confirmPassword"
             fullWidth
             name="confirmPassword"
-            helperText={errors["confirmPassword"] ? errors["confirmPassword"].message : ""}
+            helperText={
+              errors["confirmPassword"] ? errors["confirmPassword"].message : ""
+            }
             error={!!errors.confirmPassword}
             type="password"
             placeholder="●●●●●●●●"
@@ -259,7 +248,12 @@ export const RegisterPage: React.FC<RegisterProps> = ({
           {loginLink ?? (
             <Box display="flex" justifyContent="flex-start">
               <div className="flex justify-between mb-5 mt-3">
-                <Link to="/" className="flex text-xs no-underline text-blue-600 font-thin">Already has an account?</Link>
+                <Link
+                  to="/"
+                  className="flex text-xs no-underline text-blue-600 font-thin"
+                >
+                  Already has an account?
+                </Link>
               </div>
             </Box>
           )}
@@ -270,8 +264,8 @@ export const RegisterPage: React.FC<RegisterProps> = ({
             color="error"
             sx={{
               my: "8px",
-              p:"8px",
-              backgroundColor: "#DC2434"
+              p: "8px",
+              backgroundColor: "#DC2434",
             }}
             disabled={isLoading}
           >
@@ -297,7 +291,11 @@ export const RegisterPage: React.FC<RegisterProps> = ({
         }}
       >
         <div className="flex justify-center">
-          <img className="w-11/12" src="mhanbae.png" alt="mhanbae" />
+          <img
+            className="w-11/12"
+            src="https://media.discordapp.net/attachments/1150062586025476206/1174171541299277834/mhanbae.png?ex=65669f76&is=65542a76&hm=3bbc64481150e3451dea2e5240e041df612c3d6ce52529611e8b410f50d46df2&=&width=1454&height=278"
+            alt="mhanbae"
+          />
         </div>
         {renderContent ? renderContent(Content) : Content}
       </Container>
