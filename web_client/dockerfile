@@ -2,8 +2,8 @@ FROM node:20.8-slim
 
 ARG REACT_APP_BACKEND_API
 
-# ENV REACT_APP_BACKEND_API=http://a80522e8e4d8b4220875a6beaed61a73-1241861906.ap-southeast-1.elb.amazonaws.com/api
-ENV REACT_APP_BACKEND_API=http://localhost:3000
+ENV REACT_APP_BACKEND_API=http://a7758a87433ed494eb3fce92d119a4f1-1218917515.ap-southeast-1.elb.amazonaws.com/api
+# ENV REACT_APP_BACKEND_API=http://localhost:3000
 ADD . /home/web
 
 WORKDIR /home/web

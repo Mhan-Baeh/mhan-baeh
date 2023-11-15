@@ -175,38 +175,38 @@ services:
   #     - 8081:8081
 
   # api-gateway ------------------------------------
-  # api-gateway:
-  #   image: champkub6/api-gateway:v4.0.0
-  #   build:
-  #     context: ./api-gateway
-  #   ports:
-  #     - 3000:3000
-  #   environment:
-  #     PORT: 3000
-  #     KAFKA_HOST: app_kafka:9092
-  #     EXAMPLE_URI: http://localhost:4000
-  #     EXAMPLE_SECRET: hehe
-  #     ADMIN_URI: http://admin_service:8080
-  #     ADMIN_SECRET: ADMIN_SERVICE_SECRET_KEY
-  #     CUSTOMER_URI: http://customer_service:8082
-  #     CUSTOMER_SECRET: CUSTOMER_SERVICE_SECRET_KEY
-  #     HOUSEKEEPER_URI: http://housekeeper_service:8083
-  #     HOUSEKEEPER_SECRET: HOUSEKEEPER_SERVICE_SECRET_KEY
-  #     APPOINTMENT_URI: http://appointment_service:8081
-  #     ADMIN_UI: http://localhost:5003
-  #     HOUSEKEEPER_UI: http://localhost:5002
-  #     CUSTOMER_UI: http://localhost:5001
+  api-gateway:
+    image: champkub6/api-gateway:v11.0.0
+    build:
+      context: ./api-gateway
+    ports:
+      - 3000:3000
+    environment:
+      PORT: 3000
+      KAFKA_HOST: app_kafka:9092
+      EXAMPLE_URI: http://localhost:4000
+      EXAMPLE_SECRET: hehe
+      ADMIN_URI: http://admin_service:8080
+      ADMIN_SECRET: ADMIN_SERVICE_SECRET_KEY
+      CUSTOMER_URI: http://customer_service:8082
+      CUSTOMER_SECRET: CUSTOMER_SERVICE_SECRET_KEY
+      HOUSEKEEPER_URI: http://housekeeper_service:8083
+      HOUSEKEEPER_SECRET: HOUSEKEEPER_SERVICE_SECRET_KEY
+      APPOINTMENT_URI: http://appointment_service:8081
+      ADMIN_UI: http://localhost:5003
+      HOUSEKEEPER_UI: http://localhost:5002
+      CUSTOMER_UI: http://localhost:5001
 
   # web-admin ------------------------------------
-  web-admin:
-    image: champkub6/web-admin:v5.0.0
-    build:
-      context: ./web_admin
-    ports:
-      - 5003:5003
-    environment:
-      PORT: 5003
-      REACT_APP_BACKEND_API: http://localhost:3000
+  # web-admin:
+  #   image: champkub6/web-admin:v5.0.0
+  #   build:
+  #     context: ./web_admin
+  #   ports:
+  #     - 5003:5003
+  #   environment:
+  #     PORT: 5003
+  #     REACT_APP_BACKEND_API: http://localhost:3000
 
   # # web-client ------------------------------------
   # web-client:

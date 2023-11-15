@@ -14,7 +14,7 @@ spec:
     spec:
       containers: 
         - name: api-gateway
-          image: champkub6/api-gateway:v4.0.0
+          image: champkub6/api-gateway:v11.0.0
           ports:
             - containerPort: 3000
           env:

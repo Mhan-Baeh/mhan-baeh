@@ -6,7 +6,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: a80522e8e4d8b4220875a6beaed61a73-1241861906.ap-southeast-1.elb.amazonaws.com
+    - host: a7758a87433ed494eb3fce92d119a4f1-1218917515.ap-southeast-1.elb.amazonaws.com
       http:
         paths:
           - pathType: Prefix

@@ -156,8 +156,7 @@ export const HiringCreate = () => {
 
   useEffect(() => {
     console.log("ERRORS", errors);
-  }
-  , [errors])
+  }, [errors]);
   const estimatedHour = useMemo(() => {
     // calculate hour for job and house size
     const hour = watch("to_do_list").reduce((acc, cur) => {
@@ -262,7 +261,6 @@ export const HiringCreate = () => {
 
   const handleClose = () => {
     setOpen(false);
-    window.location.href = "/appointments";
   };
 
   return (
@@ -465,7 +463,7 @@ export const HiringCreate = () => {
           {"The request has been sent successfully"}
         </DialogTitle>
         <DialogContent>
-          <hr/>
+          <hr />
           <DialogContentText id="alert-dialog-description">
             <div className="flex flex-col items-center">
               <Typography variant="h6" color="gray-500">
